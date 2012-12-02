@@ -1,0 +1,4 @@
+main-class: com.swayam.bhasha.BhashaLauncher
+author: paawak@gmail.com
+Class-Path: libs/log4j-1.2.13.jar libs/swing-layout-1.0.jar libs/itext-2.0.4.jar
+
