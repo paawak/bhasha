@@ -20,10 +20,14 @@ public class OpenTypeFontReader {
     private static final Logger LOG = LoggerFactory.getLogger(OpenTypeFontReader.class);
 
     private final RandomAccessFileOrArray rf;
+    private final int[] glyphWidthByIndex;
+    private final Map<Integer, Character> glyphToCharacterMap;
     private Map<Integer, List<Integer>> rawLigatureSubstitutionMap;
 
-    public OpenTypeFontReader(String fontFilePath) throws IOException {
+    public OpenTypeFontReader(String fontFilePath, Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthByIndex) throws IOException {
         rf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fontFilePath));
+        this.glyphWidthByIndex = glyphWidthByIndex;
+        this.glyphToCharacterMap = glyphToCharacterMap;
     }
 
     public Map<Integer, List<Integer>> getRawLigatureSubstitutionMap(int gsubTableLocation) throws IOException {
@@ -31,11 +35,11 @@ public class OpenTypeFontReader {
         return Collections.unmodifiableMap(rawLigatureSubstitutionMap);
     }
     
-    public Map<String, Integer> getGlyphSubstitutionMap(int gsubTableLocation, Map<Integer, Character> glyphToCharacterMap) throws IOException {
+    public Map<String, Glyph> getGlyphSubstitutionMap(int gsubTableLocation) throws IOException {
         
         readGsubTable(gsubTableLocation);
         
-        Map<String, Integer> glyphSubstitutionMap = new HashMap<String, Integer>(rawLigatureSubstitutionMap.size());
+        Map<String, Glyph> glyphSubstitutionMap = new HashMap<String, Glyph>();
         
         for (Integer glyphIdToReplace : rawLigatureSubstitutionMap.keySet()) {
             List<Integer> constituentGlyphs = rawLigatureSubstitutionMap.get(glyphIdToReplace);
@@ -45,7 +49,9 @@ public class OpenTypeFontReader {
                 chars.append(getTextFromGlyph(constituentGlyphId, glyphToCharacterMap));
             }
             
-            glyphSubstitutionMap.put(chars.toString(), glyphIdToReplace);
+            Glyph glyph = new Glyph(glyphIdToReplace, glyphWidthByIndex[glyphIdToReplace], chars.toString());
+            
+            glyphSubstitutionMap.put(glyph.chars, glyph);
         }
         
         return Collections.unmodifiableMap(glyphSubstitutionMap);
@@ -80,7 +86,7 @@ public class OpenTypeFontReader {
     private void readGsubTable(int gsubTableLocation) throws IOException {
 
         rawLigatureSubstitutionMap = new HashMap<Integer, List<Integer>>();
-
+        
         rf.seek(gsubTableLocation);
         // 32 bit signed
         int version = rf.readInt();

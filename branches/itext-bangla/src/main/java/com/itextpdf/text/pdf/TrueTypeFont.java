@@ -50,7 +50,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -192,6 +191,8 @@ class TrueTypeFont extends BaseFont {
     protected HashMap<Integer, int[]> cmap31;
 
     protected HashMap<Integer, int[]> cmapExt;
+    
+    private Map<String, Glyph> glyphSubstitutionMap;
 
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
@@ -681,18 +682,16 @@ class TrueTypeFont extends BaseFont {
 
                 if (tables.get("GSUB") != null) {
                 
-                    OpenTypeFontReader openTypeFontReader = new OpenTypeFontReader(fileName);
+                    OpenTypeFontReader openTypeFontReader = new OpenTypeFontReader(fileName, glyphToCharacterMap, GlyphWidths);
                     
                     Map<Integer, List<Integer>> ligatureSubstitutionMap = openTypeFontReader.getRawLigatureSubstitutionMap(tables.get("GSUB")[0]);
                     
-                    Map<String, Integer> glyphSubstitutionMap = openTypeFontReader.getGlyphSubstitutionMap(tables.get("GSUB")[0], glyphToCharacterMap);
+                    glyphSubstitutionMap = openTypeFontReader.getGlyphSubstitutionMap(tables.get("GSUB")[0]);
                     
                     printCmap10();
                     printGlyphToCharacterMap(glyphToCharacterMap);
                     printLigatureSubstitutionMap(ligatureSubstitutionMap, glyphToCharacterMap);
-                    printGlyphSubstitutionMap(glyphSubstitutionMap);
-                    
-                    System.err.println(getGlyphWidth(166)); 
+                    printGlyphSubstitutionMap();
                 
                 }
                 
@@ -1064,23 +1063,18 @@ class TrueTypeFont extends BaseFont {
 
     }
     
-    private void printGlyphSubstitutionMap(Map<String, Integer> glyphSubstitutionMap) {
+    private void printGlyphSubstitutionMap() {
         StringBuilder sb = new StringBuilder(50);
         
         int count = 1;
         
-        Set<Integer> charsLength = new HashSet<Integer>(4);
-        
         for (String chars : glyphSubstitutionMap.keySet()) {
-            int glyphId = glyphSubstitutionMap.get(chars);
-//            System.out.println(getGlyphWidth(glyphId)); 
-            charsLength.add(chars.length());
+            int glyphId = glyphSubstitutionMap.get(chars).code;
             sb.append(count++).append(".>");
             sb.append(chars).append(" => ").append(glyphId).append("\n");
         }
         
         System.out.println(getClass().getSimpleName() + ".printGlyphSubstitutionMap()\n" + sb.toString());
-        System.out.println(charsLength); 
     }
     
     private void printLigatureSubstitutionMap(Map<Integer, List<Integer>> ligatureSubstitutionMap, Map<Integer, Character> glyphToCharacterMap) {
@@ -1690,4 +1684,9 @@ class TrueTypeFont extends BaseFont {
             return null;
         return bboxes[metric[0]];
     }
+    
+    public Map<String, Glyph> getGlyphSubstitutionMap() {
+        return glyphSubstitutionMap;
+    }
+    
 }

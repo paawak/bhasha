@@ -44,10 +44,16 @@
 package com.itextpdf.text.pdf;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.pdf.languages.BanglaHasantoComparator;
 
 /**
  * Each font in the document will have an instance of this class
@@ -207,32 +213,27 @@ class FontDetails {
             }
             case BaseFont.FONT_TYPE_TTUNI: {
                 try {
-                    int len = text.length();
-                    int metrics[] = null;
-                    char glyph[] = new char[len];
-                    int i = 0;
-                    if (symbolic) {
-                        b = PdfEncodings.convertToBytes(text, "symboltt");
-                        len = b.length;
-                        for (int k = 0; k < len; ++k) {
-                            metrics = ttu.getMetricsTT(b[k] & 0xff);
-                            if (metrics == null)
-                                continue;
-                            longTag.put(Integer.valueOf(metrics[0]), new int[]{metrics[0], metrics[1], ttu.getUnicodeDifferences(b[k] & 0xff)});
-                            glyph[i++] = (char)metrics[0];
+                    
+                    Map<String, Glyph> glyphSubstitutionMap = ttu.getGlyphSubstitutionMap();
+                    
+                    if (glyphSubstitutionMap == null) {
+                    
+                        int len = text.length();
+                        int metrics[] = null;
+                        char glyph[] = new char[len];
+                        int i = 0;
+                        if (symbolic) {
+                            b = PdfEncodings.convertToBytes(text, "symboltt");
+                            len = b.length;
+                            for (int k = 0; k < len; ++k) {
+                                metrics = ttu.getMetricsTT(b[k] & 0xff);
+                                if (metrics == null)
+                                    continue;
+                                longTag.put(Integer.valueOf(metrics[0]), new int[]{metrics[0], metrics[1], ttu.getUnicodeDifferences(b[k] & 0xff)});
+                                glyph[i++] = (char)metrics[0];
+                            }
                         }
-                    }
-                    else {
-                        //FIXME: hacking away
-                        if (true) {
-                            int glyphId = 166;
-                            int glyphWidth = 810;
-                            metrics = new int[] {glyphId, 810};
-                            Integer gl = Integer.valueOf(glyphId);
-                            if (!longTag.containsKey(gl))
-                                longTag.put(gl, new int[]{glyphId, glyphWidth, 0x995});
-                            glyph[0] = (char)glyphId;
-                        } else {
+                        else {
                         	for (int k = 0; k < len; ++k) {
                         		int val;
                         		if (Utilities.isSurrogatePair(text, k)) {
@@ -252,9 +253,70 @@ class FontDetails {
                         		glyph[i++] = (char)m0;
                         	}
                         }
+                        String s = new String(glyph, 0, i);
+                        b = s.getBytes(CJKFont.CJK_ENCODING);
+                    
+                    } else {
+                        // generate a regex from the characters to be substituted
+                        
+                        //hack for Bangla, pushing back hasanto chars
+                        Set<String> keys = new TreeSet<String>(new BanglaHasantoComparator());
+                        keys.addAll(glyphSubstitutionMap.keySet());
+                        
+                        StringBuilder regexBuilder = new StringBuilder(100);
+                        
+                        for (String chars : keys) {
+                            regexBuilder.append("(").append(chars).append(")|");
+                        }
+                        
+                        regexBuilder.setLength(regexBuilder.length() - 1); 
+                        
+                        String regex = regexBuilder.toString();
+                        
+                        System.out.println("Regex=" + regex); 
+                        
+                        // convert the text to a list of Glyph, also take care of the substitution
+                        RegexStringTokenizer tokenizer = new RegexStringTokenizer(regex);
+                        String[] tokens = tokenizer.tokenize(text);
+                        
+                        List<Glyph> glyphList = new ArrayList<Glyph>(50);
+                        
+                        for (String token : tokens) {
+                            
+                            // first check whether this is in the substitution map
+                            Glyph subsGlyph = glyphSubstitutionMap.get(token);
+                            
+                            if (subsGlyph != null) {
+                                glyphList.add(subsGlyph);
+                            } else {
+                                // break up the string into individual characters
+                                for (char c : token.toCharArray()) {
+                                    int[] metrics = ttu.getMetricsTT(c);
+                                    int glyphCode = metrics[0];
+                                    int glyphWidth = metrics[1];
+                                    glyphList.add(new Glyph(glyphCode, glyphWidth, String.valueOf(c))); 
+                                }
+                            }
+                            
+                        }
+                        
+                        char[] charEncodedGlyphCodes = new char[glyphList.size()];
+                        
+                        // process each Glyph thus obtained
+                        for (int i = 0; i < glyphList.size(); i++) {
+                            Glyph glyph = glyphList.get(i); 
+                            charEncodedGlyphCodes[i] = (char) glyph.code;
+                            Integer glyphCode = Integer.valueOf(glyph.code);
+                            
+                            if (!longTag.containsKey(glyphCode)) {
+                                // FIXME: this is buggy as the 3rd arg. should be a String as a Glyph can represent more than 1 char
+                                longTag.put(glyphCode, new int[]{glyph.code, glyph.width, glyph.chars.charAt(0)}); 
+                            }
+                        }
+                        
+                        b = new String(charEncodedGlyphCodes).getBytes(CJKFont.CJK_ENCODING);
+                        
                     }
-                    String s = new String(glyph);
-                    b = s.getBytes(CJKFont.CJK_ENCODING);
                 }
                 catch (UnsupportedEncodingException e) {
                     throw new ExceptionConverter(e);
