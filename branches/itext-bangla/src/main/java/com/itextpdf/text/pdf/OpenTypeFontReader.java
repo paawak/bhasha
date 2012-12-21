@@ -2,6 +2,7 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -142,9 +143,23 @@ public class OpenTypeFontReader {
         int lookupType = rf.readShort();
         LOG.debug("lookupType=" + lookupType);
 
-        // right now i am handling only the LookupType4: Ligature Substitution
-        // Subtable
-        if (lookupType == 4) {
+        if (lookupType == 1) {// LookupType 1: Single Substitution Subtable
+            
+            int coverage = rf.readShort();
+            LOG.debug("coverage=" + coverage);
+            
+            int deltaGlyphID = rf.readShort();
+            LOG.debug("deltaGlyphID=" + deltaGlyphID);
+            
+            List<Integer> coverageGlyphIds = readCoverageFormat(lookupTableLocation + coverage);
+            
+            for (int coverageGlyphId : coverageGlyphIds) {
+                int substituteGlyphId = coverageGlyphId + deltaGlyphID;
+                rawLigatureSubstitutionMap.put(substituteGlyphId, Arrays.asList(coverageGlyphId)); 
+            }
+            
+        } else if (lookupType == 4) {// LookupType4: Ligature Substitution Subtable
+            
             int lookupFlag = rf.readShort();
             LOG.debug("lookupFlag=" + lookupFlag);
             int subTableCount = rf.readShort();
@@ -264,7 +279,7 @@ public class OpenTypeFontReader {
                 glyphIds.add(coverageGlyphId);
             }
 
-        } else {
+        } else if (coverageFormat == 2) {
 
             int rangeCount = rf.readShort();
 
@@ -276,6 +291,8 @@ public class OpenTypeFontReader {
                 readRangeRecord(glyphIds);
             }
 
+        } else {
+            throw new UnsupportedOperationException("The coverage format " + coverageFormat + " is not yet supported");
         }
 
         return Collections.unmodifiableList(glyphIds);

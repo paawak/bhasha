@@ -53,7 +53,7 @@ import java.util.TreeSet;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
-import com.itextpdf.text.pdf.languages.BanglaHasantoComparator;
+import com.itextpdf.text.pdf.languages.BanglaJuktakkhorComparator;
 
 /**
  * Each font in the document will have an instance of this class
@@ -260,7 +260,7 @@ class FontDetails {
                         // generate a regex from the characters to be substituted
                         
                         //hack for Bangla, pushing back hasanto chars
-                        Set<String> keys = new TreeSet<String>(new BanglaHasantoComparator());
+                        Set<String> keys = new TreeSet<String>(new BanglaJuktakkhorComparator());
                         keys.addAll(glyphSubstitutionMap.keySet());
                         
                         StringBuilder regexBuilder = new StringBuilder(100);

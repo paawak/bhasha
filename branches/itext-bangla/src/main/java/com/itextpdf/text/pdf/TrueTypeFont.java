@@ -672,15 +672,16 @@ class TrueTypeFont extends BaseFont {
                 readBbox();
                 
                 /////////////////////////////////////////////
-                Map<Integer, Character> glyphToCharacterMap = new HashMap<Integer, Character>(cmap31.size());
-
-                for (Integer charCode : cmap31.keySet()) {
-                    char c = (char) charCode.intValue();
-                    int glyphCode = cmap31.get(charCode)[0];
-                    glyphToCharacterMap.put(glyphCode, c);
-                }
 
                 if (tables.get("GSUB") != null) {
+                    
+                    Map<Integer, Character> glyphToCharacterMap = new HashMap<Integer, Character>(cmap31.size());
+
+                    for (Integer charCode : cmap31.keySet()) {
+                        char c = (char) charCode.intValue();
+                        int glyphCode = cmap31.get(charCode)[0];
+                        glyphToCharacterMap.put(glyphCode, c);
+                    }
                 
                     OpenTypeFontReader openTypeFontReader = new OpenTypeFontReader(fileName, glyphToCharacterMap, GlyphWidths);
                     
