@@ -157,7 +157,7 @@ class PDFGenerator extends AbstractDocGenerator {
 
             // its very important to set the leading every time the font is set
             // otherwise, the chunks/phrases overlap.
-            // paragraph.setLeading(font.getSize() * 1.5f);
+            paragraph.setLeading(font.getSize() * 1.5f);
 
             paragraph.add(new Phrase(paraText.getText(), font));
         }
