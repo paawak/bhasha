@@ -48,7 +48,7 @@ public class BanglaPdfGenerationTest {
      * \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf
      * 
      */
-    private static final String BANGLA_TEXT = "আমি কোন পথে ক্ষীরের ষন্ড পুতুল রুপো গঙ্গা ঋষি";
+    private static final String BANGLA_TEXT = "আমি কোন পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
 
     // private static final String BANGLA_TEXT = "ক";
 
@@ -64,7 +64,7 @@ public class BanglaPdfGenerationTest {
         document.open();
         // step 4
         Paragraph paragraph = new Paragraph();
-        paragraph.add(new Phrase(BANGLA_TEXT, new Font(BaseFont.createFont("/usr/share/fonts/lohit-bengali/Lohit-Bengali.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED))));
+        paragraph.add(new Phrase(BANGLA_TEXT, new Font(BaseFont.createFont("/usr/share/fonts/lohit-bengali/Lohit-Bengali.ttf", BaseFont.IDENTITY_H, true))));
         document.add(paragraph);
         // step 5
         document.close();
