@@ -2,7 +2,7 @@ package com.itextpdf.text.pdf;
 
 /**
  *  
- * @author paawak
+ * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public class Glyph {
     

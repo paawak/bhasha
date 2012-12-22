@@ -13,30 +13,34 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 
 /**
+ * <p>
+ * Parses an OpenTypeFont file and reads the Glyph Substitution Table. This table governs how two or more Glyphs should be merged
+ * to a single Glyph. This is especially useful for Asian languages like Bangla, Hindi, etc.
+ * </p>
+ * <p>
+ * This has been written according to the OPenTypeFont specifications. This may be found <a href="http://www.microsoft.com/typography/otspec/gsub.htm">here</a>.
+ * </p>
  * 
- * @author paawak
+ * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
-public class OpenTypeFontReader {
+public class GlyphSubstitutionTableReader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTypeFontReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GlyphSubstitutionTableReader.class);
 
     private final RandomAccessFileOrArray rf;
+    private final int gsubTableLocation;
     private final int[] glyphWidthByIndex;
     private final Map<Integer, Character> glyphToCharacterMap;
     private Map<Integer, List<Integer>> rawLigatureSubstitutionMap;
 
-    public OpenTypeFontReader(String fontFilePath, Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthByIndex) throws IOException {
+    public GlyphSubstitutionTableReader(String fontFilePath, int gsubTableLocation, Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthByIndex) throws IOException {
         rf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fontFilePath));
+        this.gsubTableLocation = gsubTableLocation;
         this.glyphWidthByIndex = glyphWidthByIndex;
         this.glyphToCharacterMap = glyphToCharacterMap;
     }
 
-    public Map<Integer, List<Integer>> getRawLigatureSubstitutionMap(int gsubTableLocation) throws IOException {
-        readGsubTable(gsubTableLocation);
-        return Collections.unmodifiableMap(rawLigatureSubstitutionMap);
-    }
-    
-    public Map<String, Glyph> getGlyphSubstitutionMap(int gsubTableLocation) throws IOException {
+    public Map<String, Glyph> getGlyphSubstitutionMap() throws IOException {
         
         readGsubTable(gsubTableLocation);
         

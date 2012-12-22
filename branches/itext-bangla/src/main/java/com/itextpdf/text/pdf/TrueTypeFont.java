@@ -48,7 +48,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
@@ -683,17 +682,10 @@ class TrueTypeFont extends BaseFont {
                         glyphToCharacterMap.put(glyphCode, c);
                     }
                 
-                    OpenTypeFontReader openTypeFontReader = new OpenTypeFontReader(fileName, glyphToCharacterMap, GlyphWidths);
+                    GlyphSubstitutionTableReader openTypeFontReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     
-                    Map<Integer, List<Integer>> ligatureSubstitutionMap = openTypeFontReader.getRawLigatureSubstitutionMap(tables.get("GSUB")[0]);
+                    glyphSubstitutionMap = openTypeFontReader.getGlyphSubstitutionMap();
                     
-                    glyphSubstitutionMap = openTypeFontReader.getGlyphSubstitutionMap(tables.get("GSUB")[0]);
-                    
-                    printCmap10();
-                    printGlyphToCharacterMap(glyphToCharacterMap);
-                    printLigatureSubstitutionMap(ligatureSubstitutionMap, glyphToCharacterMap);
-                    printGlyphSubstitutionMap();
-                
                 }
                 
                 ////////////////////////////////////////////
@@ -766,8 +758,8 @@ class TrueTypeFont extends BaseFont {
      * @return the width of the glyph in normalized 1000 units
      */
     protected int getGlyphWidth(int glyph) {
-//        if (glyph >= GlyphWidths.length) 
-//            glyph = GlyphWidths.length - 1;
+        if (glyph >= GlyphWidths.length)
+            glyph = GlyphWidths.length - 1;
         return GlyphWidths[glyph];
     }
 
@@ -1038,88 +1030,6 @@ class TrueTypeFont extends BaseFont {
             }
         }
     }
-    
-    
-    //////////////////////////////////////////////////////////////////////////////
-    
-    private void printCmap10() {
-
-        int count = 0;
-
-        StringBuilder sb = new StringBuilder(50);
-
-        for (Integer key : cmap10.keySet()) {
-            sb.append(++count).append(".> ").append(key).append(" : ");
-
-            int[] array = cmap10.get(key);
-            for (int a : array) {
-                sb.append(a).append(", ");
-            }
-
-            sb.setLength(sb.length() - 2);
-            sb.append("\n");
-        }
-
-        System.out.println(getClass().getSimpleName() + ".printCmap10()\n" + sb.toString());
-
-    }
-    
-    private void printGlyphSubstitutionMap() {
-        StringBuilder sb = new StringBuilder(50);
-        
-        int count = 1;
-        
-        for (String chars : glyphSubstitutionMap.keySet()) {
-            int glyphId = glyphSubstitutionMap.get(chars).code;
-            sb.append(count++).append(".>");
-            sb.append(chars).append(" => ").append(glyphId).append("\n");
-        }
-        
-        System.out.println(getClass().getSimpleName() + ".printGlyphSubstitutionMap()\n" + sb.toString());
-    }
-    
-    private void printLigatureSubstitutionMap(Map<Integer, List<Integer>> ligatureSubstitutionMap, Map<Integer, Character> glyphToCharacterMap) {
-
-        int count = 0;
-
-        StringBuilder sb = new StringBuilder(50);
-
-        for (Integer key : ligatureSubstitutionMap.keySet()) {
-            sb.append(++count).append(".> ").append(createGlyphIdWithChar(key, glyphToCharacterMap)).append(" : ");
-
-            List<Integer> list = ligatureSubstitutionMap.get(key);
-            for (int a : list) {
-                sb.append(createGlyphIdWithChar(a, glyphToCharacterMap)).append(", ");
-            }
-
-            sb.setLength(sb.length() - 2);
-            sb.append("\n");
-        }
-
-        System.out.println(getClass().getSimpleName() + ".printLigatureSubstitutionMap()\n" + sb.toString());
-
-    }
-
-    private String createGlyphIdWithChar(int glyphId, Map<Integer, Character> glyphToCharacterMap) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(").append(glyphId).append("=>").append(glyphToCharacterMap.get(glyphId)).append(")");
-        return sb.toString();
-    }
-
-    private void printGlyphToCharacterMap(Map<Integer, Character> glyphToCharacterMap) {
-        int count = 0;
-
-        StringBuilder sb = new StringBuilder(50);
-
-        for (Integer key : glyphToCharacterMap.keySet()) {
-            sb.append(++count).append(".> ").append(key).append(" : ").append(glyphToCharacterMap.get(key));
-            sb.append("\n");
-        }
-
-        System.out.println(getClass().getSimpleName() + ".printGlyphToCharacterMap()\n" + sb.toString());
-    }
-
-    /////////////////////////////////////////////////////////////////////////////
 
     /** Gets the kerning between two Unicode chars.
      * @param char1 the first char
@@ -1686,7 +1596,7 @@ class TrueTypeFont extends BaseFont {
         return bboxes[metric[0]];
     }
     
-    public Map<String, Glyph> getGlyphSubstitutionMap() {
+    protected Map<String, Glyph> getGlyphSubstitutionMap() {
         return glyphSubstitutionMap;
     }
     

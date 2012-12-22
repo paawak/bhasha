@@ -53,7 +53,7 @@ import java.util.TreeSet;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
-import com.itextpdf.text.pdf.languages.BanglaJuktakkhorComparator;
+import com.itextpdf.text.pdf.languages.IndicCompositeCharacterComparator;
 
 /**
  * Each font in the document will have an instance of this class
@@ -259,24 +259,12 @@ class FontDetails {
                     } else {
                         // generate a regex from the characters to be substituted
                         
-                        //hack for Bangla, pushing back hasanto chars
-                        Set<String> keys = new TreeSet<String>(new BanglaJuktakkhorComparator());
-                        keys.addAll(glyphSubstitutionMap.keySet());
-                        
-                        StringBuilder regexBuilder = new StringBuilder(100);
-                        
-                        for (String chars : keys) {
-                            regexBuilder.append("(").append(chars).append(")|");
-                        }
-                        
-                        regexBuilder.setLength(regexBuilder.length() - 1); 
-                        
-                        String regex = regexBuilder.toString();
-                        
-                        System.out.println("Regex=" + regex); 
+                        // for Indic languages: push back the CompositeCharacters with smaller length
+                        Set<String> compositeCharacters = new TreeSet<String>(new IndicCompositeCharacterComparator());
+                        compositeCharacters.addAll(glyphSubstitutionMap.keySet());
                         
                         // convert the text to a list of Glyph, also take care of the substitution
-                        RegexStringTokenizer tokenizer = new RegexStringTokenizer(regex);
+                        ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(compositeCharacters.toArray(new String[0]));
                         String[] tokens = tokenizer.tokenize(text);
                         
                         List<Glyph> glyphList = new ArrayList<Glyph>(50);
