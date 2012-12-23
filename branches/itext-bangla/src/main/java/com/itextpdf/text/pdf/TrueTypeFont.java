@@ -54,6 +54,8 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.fonts.otf.GlyphPositioningTableReader;
+import com.itextpdf.text.pdf.fonts.otf.GlyphSubstitutionTableReader;
 
 /** Reads a Truetype font
  *
@@ -682,10 +684,15 @@ class TrueTypeFont extends BaseFont {
                         glyphToCharacterMap.put(glyphCode, c);
                     }
                 
-                    GlyphSubstitutionTableReader openTypeFontReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
+                    GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     
-                    glyphSubstitutionMap = openTypeFontReader.getGlyphSubstitutionMap();
+                    glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
                     
+                }
+                
+                if (tables.get("GPOS") != null) {
+                    GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
+                    gposReader.read();
                 }
                 
                 ////////////////////////////////////////////

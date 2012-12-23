@@ -1,4 +1,4 @@
-package com.itextpdf.text.pdf;
+package com.itextpdf.text.pdf.fonts.otf;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.Glyph;
 
 /**
  * <p>
@@ -23,26 +23,23 @@ import com.itextpdf.text.log.LoggerFactory;
  * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
-public class GlyphSubstitutionTableReader {
+public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlyphSubstitutionTableReader.class);
 
-    private final RandomAccessFileOrArray rf;
-    private final int gsubTableLocation;
     private final int[] glyphWidthByIndex;
     private final Map<Integer, Character> glyphToCharacterMap;
     private Map<Integer, List<Integer>> rawLigatureSubstitutionMap;
 
     public GlyphSubstitutionTableReader(String fontFilePath, int gsubTableLocation, Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthByIndex) throws IOException {
-        rf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fontFilePath));
-        this.gsubTableLocation = gsubTableLocation;
+        super(fontFilePath, gsubTableLocation);
         this.glyphWidthByIndex = glyphWidthByIndex;
         this.glyphToCharacterMap = glyphToCharacterMap;
     }
 
     public Map<String, Glyph> getGlyphSubstitutionMap() throws IOException {
         
-        readGsubTable(gsubTableLocation);
+        readGsubTable();
         
         Map<String, Glyph> glyphSubstitutionMap = new HashMap<String, Glyph>();
         
@@ -88,61 +85,13 @@ public class GlyphSubstitutionTableReader {
         return chars.toString();
     }
     
-    private void readGsubTable(int gsubTableLocation) throws IOException {
-
+    private void readGsubTable() throws IOException {
         rawLigatureSubstitutionMap = new HashMap<Integer, List<Integer>>();
-        
-        rf.seek(gsubTableLocation);
-        // 32 bit signed
-        int version = rf.readInt();
-        // 16 bit unsigned
-        int scriptListOffset = rf.readUnsignedShort();
-        int featureListOffset = rf.readUnsignedShort();
-        int lookupListOffset = rf.readUnsignedShort();
-
-        LOG.debug("version=" + version);
-        LOG.debug("scriptListOffset=" + scriptListOffset);
-        LOG.debug("featureListOffset=" + featureListOffset);
-        LOG.debug("lookupListOffset=" + lookupListOffset);
-
-        LOG.debug("************************************");
-
-        readLookupListTable(gsubTableLocation + lookupListOffset);
-
-        LOG.debug("************************************");
-
-        // Map<String, Integer> scriptRecords =
-        // readScriptListTable(gsubTableLocationOffset + scriptListOffset);
-        //
-        // // read the Script tables
-        // for (String scriptName : scriptRecords.keySet()) {
-        // readScriptTable(scriptRecords.get(scriptName));
-        // }
-
+        readLookupListTable();
     }
 
-    private void readLookupListTable(int lookupListTableLocation) throws IOException {
-        rf.seek(lookupListTableLocation);
-        final int lookupCount = rf.readShort();
-        LOG.debug("lookupCount=" + lookupCount);
-
-        List<Integer> lookupTableOffsets = new ArrayList<Integer>();
-
-        for (int i = 0; i < lookupCount; i++) {
-            int lookupTableOffset = rf.readShort();
-            lookupTableOffsets.add(lookupTableOffset);
-        }
-
-        for (int lookupTableOffset : lookupTableOffsets) {
-            LOG.debug("lookupTableOffset=" + lookupTableOffset);
-            LOG.debug("--------------------");
-            readLookupTable(lookupListTableLocation + lookupTableOffset);
-            LOG.debug("--------------------");
-        }
-
-    }
-
-    private void readLookupTable(int lookupTableLocation) throws IOException {
+    @Override
+    protected void readLookupTable(int lookupTableLocation) throws IOException {
         rf.seek(lookupTableLocation);
         int lookupType = rf.readShort();
         LOG.debug("lookupType=" + lookupType);
@@ -263,110 +212,5 @@ public class GlyphSubstitutionTableReader {
 
         rawLigatureSubstitutionMap.put(ligGlyph, glyphIdList);
     }
-
-    private List<Integer> readCoverageFormat(int coverageLocation) throws IOException {
-        rf.seek(coverageLocation);
-        int coverageFormat = rf.readShort();
-
-        List<Integer> glyphIds;
-
-        if (coverageFormat == 1) {
-            int glyphCount = rf.readShort();
-
-            LOG.debug("^^^^^^^^^coverageCount=" + glyphCount);
-
-            glyphIds = new ArrayList<Integer>(glyphCount);
-
-            for (int i = 0; i < glyphCount; i++) {
-                int coverageGlyphId = rf.readShort();
-                LOG.debug("############################coverageGlyphId=" + coverageGlyphId);
-                glyphIds.add(coverageGlyphId);
-            }
-
-        } else if (coverageFormat == 2) {
-
-            int rangeCount = rf.readShort();
-
-            LOG.debug("rangeCount=" + rangeCount);
-
-            glyphIds = new ArrayList<Integer>();
-
-            for (int i = 0; i < rangeCount; i++) {
-                readRangeRecord(glyphIds);
-            }
-
-        } else {
-            throw new UnsupportedOperationException("The coverage format " + coverageFormat + " is not yet supported");
-        }
-
-        return Collections.unmodifiableList(glyphIds);
-    }
-
-    private void readRangeRecord(List<Integer> glyphIds) throws IOException {
-        int startGlyphId = rf.readShort();
-        LOG.debug("startGlyphId=" + startGlyphId);
-        int endGlyphId = rf.readShort();
-        LOG.debug("endGlyphId=" + endGlyphId);
-        int startCoverageIndex = rf.readShort();
-        LOG.debug("startCoverageIndex=" + startCoverageIndex);
-
-        for (int glyphId = startGlyphId; glyphId <= endGlyphId; glyphId++) {
-            glyphIds.add(glyphId);
-        }
-
-    }
-
-    // private Map<String, Integer> readScriptListTable(final int
-    // scriptListTableLocationOffset) throws IOException {
-    // rf.seek(scriptListTableLocationOffset);
-    // // Number of ScriptRecords
-    // int scriptCount = rf.readShort();
-    //
-    // Map<String, Integer> scriptRecords = new HashMap<String,
-    // Integer>(scriptCount);
-    //
-    // LOG.debug("scriptCount=" + scriptCount);
-    //
-    // for (int scriptRecord = 1; scriptRecord <= scriptCount; scriptRecord++) {
-    // readScriptRecord(scriptListTableLocationOffset, scriptRecords);
-    // }
-    //
-    // return scriptRecords;
-    //
-    // }
-    //
-    // private void readScriptRecord(final int scriptListTableLocationOffset,
-    // Map<String, Integer> scriptRecords) throws IOException {
-    // String scriptTag = readStandardString(4);
-    // LOG.debug("scriptTag=" + scriptTag);
-    //
-    // int scriptOffset = rf.readShort();
-    // LOG.debug("scriptOffset=" + scriptOffset);
-    //
-    // scriptRecords.put(scriptTag, scriptListTableLocationOffset +
-    // scriptOffset);
-    //
-    // }
-    //
-    // private void readScriptTable(final int scriptTableLocationOffset) throws
-    // IOException {
-    // rf.seek(scriptTableLocationOffset);
-    // int defaultLangSys = rf.readShort();
-    // LOG.debug("defaultLangSys=" + defaultLangSys);
-    // int langSysCount = rf.readShort();
-    // LOG.debug("langSysCount=" + langSysCount);
-    //
-    // for (int langSysRecord = 1; langSysRecord <= langSysCount;
-    // langSysRecord++) {
-    // readLangSysRecord();
-    // }
-    // }
-    //
-    // private void readLangSysRecord() throws IOException {
-    // String langSysTag = readStandardString(4);
-    // LOG.debug("langSysTag=" + langSysTag);
-    // int langSys = rf.readShort();
-    // LOG.debug("langSys=" + langSys);
-    // }
 
 }
