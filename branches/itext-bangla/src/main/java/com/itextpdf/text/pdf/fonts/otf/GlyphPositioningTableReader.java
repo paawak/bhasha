@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf.fonts.otf;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  *  
@@ -46,23 +47,21 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         }
         
         int markCoverageOffset = rf.readShort();
-        System.out.println("markCoverageOffset=" + markCoverageOffset); 
+        System.out.println("******markCoverageOffset=" + markCoverageOffset); 
         int baseCoverageOffset = rf.readShort();
-        System.out.println("baseCoverageOffset=" + baseCoverageOffset); 
+        System.out.println("******baseCoverageOffset=" + baseCoverageOffset); 
         int classCount = rf.readShort();
-        System.out.println("classCount=" + classCount); 
+        System.out.println("********classCount=" + classCount); 
         int markArrayOffset = rf.readShort();
-        System.out.println("markArrayOffset=" + markArrayOffset); 
+        System.out.println("*******markArrayOffset=" + markArrayOffset); 
         int baseArrayOffset = rf.readShort();
-        System.out.println("baseArrayOffset=" + baseArrayOffset); 
+        System.out.println("*******baseArrayOffset=" + baseArrayOffset); 
         
-        if (markCoverageOffset > 0) {
-            readCoverageFormat(lookupTableLocation + markCoverageOffset);
-        }
+        List<Integer> markCoverages = readCoverageFormat(lookupTableLocation + markCoverageOffset);
+        System.out.println("markCoverages=" + markCoverages.size());
         
-        if (baseCoverageOffset > 0) {
-            readCoverageFormat(lookupTableLocation + baseCoverageOffset);
-        }
+        List<Integer> baseCoverages = readCoverageFormat(lookupTableLocation + baseCoverageOffset);
+        System.out.println("baseCoverages=" + baseCoverages.size());
         
     }
     
