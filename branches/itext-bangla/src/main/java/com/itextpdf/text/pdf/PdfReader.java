@@ -1,5 +1,5 @@
 /*
- * $Id: PdfReader.java 5585 2012-12-03 22:57:40Z psoares33 $
+ * $Id: PdfReader.java 5639 2012-12-23 17:52:17Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -817,7 +817,7 @@ public class PdfReader implements PdfViewerPreferences {
                 recipients = (PdfArray)dic.get(PdfName.RECIPIENTS);
                 break;
             default:
-            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.v.eq.1", rValue));
+            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.v.eq.1", vValue));
             }
             X509CertificateHolder certHolder;
             try {

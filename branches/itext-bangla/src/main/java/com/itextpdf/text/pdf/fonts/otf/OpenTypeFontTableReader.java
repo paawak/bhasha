@@ -1,22 +1,3 @@
-/*
- * OpenTypeFontTableReader.java
- *
- * Created on Dec 23, 2012 6:32:58 PM
- *
- * Copyright (c) 2002 - 2008 : Swayam Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.itextpdf.text.pdf.fonts.otf;
 
 import java.io.IOException;
@@ -29,7 +10,7 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  *  
- * @author paawak
+ * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public abstract class OpenTypeFontTableReader {
     
@@ -41,9 +22,11 @@ public abstract class OpenTypeFontTableReader {
         this.tableLocation = tableLocation;
     }
     
-    protected abstract void readLookupTable(int lookupTableLocation) throws IOException;
-    
-    protected void readLookupListTable() throws IOException {
+    /**
+     * This is the starting point of the class. A sub-class must call this method to start getting call backs
+     * to the {@link #readSubTable(int, int)} method.
+     */
+    protected final void readLookupListTable() throws IOException {
         int lookupListTableLocation = tableLocation + readHeader().lookupListOffset;
         
         rf.seek(lookupListTableLocation);
@@ -62,7 +45,32 @@ public abstract class OpenTypeFontTableReader {
         }
     }
     
-    protected List<Integer> readCoverageFormat(int coverageLocation) throws IOException {
+    protected abstract void readSubTable(int lookupType, int subTableLocation) throws IOException;
+    
+    private void readLookupTable(int lookupTableLocation) throws IOException {
+        rf.seek(lookupTableLocation);
+        int lookupType = rf.readShort();
+        System.out.println("lookupType=" + lookupType);
+
+        int lookupFlag = rf.readShort();
+        System.out.println("lookupFlag=" + lookupFlag);
+        int subTableCount = rf.readShort();
+        System.out.println("subTableCount=" + subTableCount);
+
+        List<Integer> subTableOffsets = new ArrayList<Integer>();
+
+        for (int i = 0; i < subTableCount; i++) {
+            int subTableOffset = rf.readShort();
+            subTableOffsets.add(subTableOffset);
+        }
+
+        for (int subTableOffset : subTableOffsets) {
+            System.out.println("subTableOffset=" + subTableOffset);
+            readSubTable(lookupType, lookupTableLocation + subTableOffset);
+        }
+    }
+    
+    protected final List<Integer> readCoverageFormat(int coverageLocation) throws IOException {
         rf.seek(coverageLocation);
         int coverageFormat = rf.readShort();
 
@@ -89,7 +97,7 @@ public abstract class OpenTypeFontTableReader {
             }
 
         } else {
-            throw new UnsupportedOperationException("The coverage format " + coverageFormat + " is not yet supported");
+            throw new UnsupportedOperationException("Invalid coverage format: " + coverageFormat);
         }
 
         return Collections.unmodifiableList(glyphIds);

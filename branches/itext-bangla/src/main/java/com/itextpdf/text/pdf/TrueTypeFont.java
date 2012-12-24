@@ -54,6 +54,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.fonts.otf.FontReadingException;
 import com.itextpdf.text.pdf.fonts.otf.GlyphPositioningTableReader;
 import com.itextpdf.text.pdf.fonts.otf.GlyphSubstitutionTableReader;
 
@@ -686,13 +687,32 @@ class TrueTypeFont extends BaseFont {
                 
                     GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     
-                    glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
+                    // failsafe
+                    try {
+                        glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
+                    } catch (FontReadingException e) {
+                        e.printStackTrace();
+                    }
                     
                 }
                 
                 if (tables.get("GPOS") != null) {
                     GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
                     gposReader.read();
+                }
+                
+                if (false) {
+                    StringBuilder sb = new StringBuilder(50);
+                    
+                    int count = 1;
+                    
+                    for (String chars : glyphSubstitutionMap.keySet()) {
+                        int glyphId = glyphSubstitutionMap.get(chars).code;
+                        sb.append(count++).append(".>");
+                        sb.append(chars).append(" => ").append(glyphId).append("\n");
+                    }
+                    
+                    System.out.println("glyphSubstitutionMap:\n" + sb.toString());
                 }
                 
                 ////////////////////////////////////////////

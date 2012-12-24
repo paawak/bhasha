@@ -37,9 +37,15 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
         this.glyphToCharacterMap = glyphToCharacterMap;
     }
 
-    public Map<String, Glyph> getGlyphSubstitutionMap() throws IOException {
+    public Map<String, Glyph> getGlyphSubstitutionMap() throws FontReadingException {
         
-        readGsubTable();
+        rawLigatureSubstitutionMap = new HashMap<Integer, List<Integer>>();
+        
+        try {
+            readLookupListTable();
+        } catch (IOException e) {
+            throw new FontReadingException("Could not read lookupListTable", e);
+        }
         
         Map<String, Glyph> glyphSubstitutionMap = new HashMap<String, Glyph>();
         
@@ -57,10 +63,10 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
         }
         
         return Collections.unmodifiableMap(glyphSubstitutionMap);
-        
+         
     }
     
-    private String getTextFromGlyph(int glyphId, Map<Integer, Character> glyphToCharacterMap) {
+    private String getTextFromGlyph(int glyphId, Map<Integer, Character> glyphToCharacterMap) throws FontReadingException {
         
         StringBuilder chars = new StringBuilder(1);
         
@@ -71,7 +77,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
             List<Integer> constituentGlyphs = rawLigatureSubstitutionMap.get(glyphId);
             
             if (constituentGlyphs == null || constituentGlyphs.isEmpty()) {
-                throw new IllegalArgumentException("No corresponding character or simple glyphs found for GlyphID=" + glyphId);
+                throw new FontReadingException("No corresponding character or simple glyphs found for GlyphID=" + glyphId);
             }
             
             for (int constituentGlyphId : constituentGlyphs) {
@@ -85,58 +91,51 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
         return chars.toString();
     }
     
-    private void readGsubTable() throws IOException {
-        rawLigatureSubstitutionMap = new HashMap<Integer, List<Integer>>();
-        readLookupListTable();
+    @Override
+    protected void readSubTable(int lookupType, int subTableLocation) throws IOException {
+        
+        if (lookupType == 1) {
+            readSingleSubstitutionSubtable(subTableLocation);
+        } else if (lookupType == 4) {
+            readLigatureSubstitutionSubtable(subTableLocation);
+        } else {
+            System.err.println("LookupType " + lookupType + " is not yet handled");
+        }
+        
     }
 
-    @Override
-    protected void readLookupTable(int lookupTableLocation) throws IOException {
-        rf.seek(lookupTableLocation);
-        int lookupType = rf.readShort();
-        LOG.debug("lookupType=" + lookupType);
-
-        if (lookupType == 1) {// LookupType 1: Single Substitution Subtable
-            
+    /**
+     * LookupType 1: Single Substitution Subtable
+     */
+    private void readSingleSubstitutionSubtable(int subTableLocation) throws IOException { 
+        rf.seek(subTableLocation);
+        
+        int substFormat = rf.readShort();
+        LOG.debug("substFormat=" + substFormat);
+        
+        if (substFormat == 1) {
             int coverage = rf.readShort();
             LOG.debug("coverage=" + coverage);
             
             int deltaGlyphID = rf.readShort();
             LOG.debug("deltaGlyphID=" + deltaGlyphID);
             
-            List<Integer> coverageGlyphIds = readCoverageFormat(lookupTableLocation + coverage);
+            List<Integer> coverageGlyphIds = readCoverageFormat(subTableLocation + coverage);
             
             for (int coverageGlyphId : coverageGlyphIds) {
                 int substituteGlyphId = coverageGlyphId + deltaGlyphID;
                 rawLigatureSubstitutionMap.put(substituteGlyphId, Arrays.asList(coverageGlyphId)); 
             }
-            
-        } else if (lookupType == 4) {// LookupType4: Ligature Substitution Subtable
-            
-            int lookupFlag = rf.readShort();
-            LOG.debug("lookupFlag=" + lookupFlag);
-            int subTableCount = rf.readShort();
-            LOG.debug("subTableCount=" + subTableCount);
-
-            List<Integer> subTableOffsets = new ArrayList<Integer>();
-
-            for (int i = 0; i < subTableCount; i++) {
-                int subTableOffset = rf.readShort();
-                subTableOffsets.add(subTableOffset);
-            }
-
-            for (int subTableOffset : subTableOffsets) {
-                LOG.debug("subTableOffset=" + subTableOffset);
-                LOG.debug("^^^^^^^^^^^^^");
-                readLigatureSubstitutionSubtable(lookupTableLocation + subTableOffset);
-                LOG.debug("^^^^^^^^^^^^^");
-            }
+        } else if (substFormat == 2) {
+            System.err.println("substFormat 2 is not yet handled");
         } else {
-            System.err.println("The lookup type " + lookupType + " is not yet handled");
+            throw new IllegalArgumentException("Bad substFormat: " + substFormat);
         }
-
     }
 
+    /**
+     * LookupType 4: Ligature Substitution Subtable
+     */
     private void readLigatureSubstitutionSubtable(int ligatureSubstitutionSubtableLocation) throws IOException {
         rf.seek(ligatureSubstitutionSubtableLocation);
         int substFormat = rf.readShort();
