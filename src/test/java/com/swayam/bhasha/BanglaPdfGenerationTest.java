@@ -50,6 +50,11 @@ public class BanglaPdfGenerationTest {
      */
     private static final String BANGLA_TEXT = "আমি কোন পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
 
+    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
+
+    // private static final String BANGLA_FONT =
+    // "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
+
     public void createPdf(String filename) throws DocumentException, IOException {
         // step 1
         Document document = new Document();
@@ -59,7 +64,7 @@ public class BanglaPdfGenerationTest {
         document.open();
         // step 4
         Paragraph paragraph = new Paragraph();
-        paragraph.add(new Phrase(BANGLA_TEXT, new Font(BaseFont.createFont("/usr/share/fonts/lohit-bengali/Lohit-Bengali.ttf", BaseFont.IDENTITY_H, true))));
+        paragraph.add(new Phrase(BANGLA_TEXT, new Font(BaseFont.createFont(BanglaPdfGenerationTest.class.getResource(BANGLA_FONT).getFile(), BaseFont.IDENTITY_H, true))));
         document.add(paragraph);
         // step 5
         document.close();
