@@ -15,10 +15,10 @@ import java.util.Comparator;
  * <p>
  * <h3>Examples of CompositeCharactes from Bangla</h3>
  * <ul>
- * <li><b>ঙ্গ</b></li>
- * <li><b>ঙ্</b></li>
- * <li><b>ক্ষ্ম</b></li>
- * <li><b>ক্ষ</b></li>
+ * <li><b>ঙ�?গ</b></li>
+ * <li><b>ঙ�?</b></li>
+ * <li><b>ক�?ষ�?ম</b></li>
+ * <li><b>ক�?ষ</b></li>
  * </ul>
  * </p>
  *  

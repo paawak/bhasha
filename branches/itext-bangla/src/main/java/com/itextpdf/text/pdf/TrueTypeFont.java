@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TrueTypeFont.java 5557 2012-11-22 13:45:39Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

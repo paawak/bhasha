@@ -79,8 +79,8 @@ public class ArrayBasedStringTokenizerTest {
     @Test
     public void testTokenize_Bangla() {
         //given
-        ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(new String[]{"\u0995\u09cd\u09b7", "পু"});
-        String text = "আমি কোন পথে ক্ষীরের ষন্ড পুতুল রুপো গঙ্গা ঋষি";
+        ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(new String[]{"\u0995\u09cd\u09b7", "প�?"});
+        String text = "আমি কোন পথে ক�?ষীরের ষন�?ড প�?ত�?ল র�?পো গঙ�?গা ঋষি";
         
         //when
         String[] tokens = tokenizer.tokenize(text);
@@ -95,8 +95,8 @@ public class ArrayBasedStringTokenizerTest {
         
         List<String> tokenList = Arrays.asList(tokens);
         
-        assertTrue(tokenList.contains("ক্ষ"));
-        assertTrue(tokenList.contains("পু")); 
+        assertTrue(tokenList.contains("ক�?ষ"));
+        assertTrue(tokenList.contains("প�?")); 
     }
 
 }
