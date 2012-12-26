@@ -69,6 +69,8 @@ public class ArrayBasedStringTokenizer {
         
         String regex = regexBuilder.toString();
         
+//        System.out.println("regex=" + regex); 
+        
         return regex;
     }
 

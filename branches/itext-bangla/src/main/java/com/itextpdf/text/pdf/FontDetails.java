@@ -263,6 +263,14 @@ class FontDetails {
                         Set<String> compositeCharacters = new TreeSet<String>(new IndicCompositeCharacterComparator());
                         compositeCharacters.addAll(glyphSubstitutionMap.keySet());
                         
+//                        List<String> compositeCharacters = new ArrayList<String>();
+//                        
+//                        for (String glyphSubKey : glyphSubstitutionMap.keySet()) {
+//                        	compositeCharacters.add(0, glyphSubKey);
+//                        }
+                        
+//                        System.out.println("compositeCharacters=" + compositeCharacters); 
+                        
                         // convert the text to a list of Glyph, also take care of the substitution
                         ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(compositeCharacters.toArray(new String[0]));
                         String[] tokens = tokenizer.tokenize(text);
