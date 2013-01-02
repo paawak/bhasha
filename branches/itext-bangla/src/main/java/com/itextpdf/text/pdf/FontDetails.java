@@ -1,5 +1,5 @@
 /*
- * $Id: FontDetails.java 5235 2012-07-20 12:35:28Z achingarev $
+ * $Id: FontDetails.java 5644 2013-01-01 16:10:42Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -304,9 +304,16 @@ class FontDetails {
                             charEncodedGlyphCodes[i] = (char) glyph.code;
                             Integer glyphCode = Integer.valueOf(glyph.code);
                             
+//                            if (glyphCode == 101) {
+//                             	System.err.println("*******************");
+//                             	//get the previous entry
+//                             	Glyph previousGlyph = glyphList.get(i - 1); 
+//                             	longTag.get(previousGlyph.code)[1] = 0;
+//                             }
+                            
                             if (!longTag.containsKey(glyphCode)) {
                                 // FIXME: this is buggy as the 3rd arg. should be a String as a Glyph can represent more than 1 char
-                                longTag.put(glyphCode, new int[]{glyph.code, glyph.width, glyph.chars.charAt(0)}); 
+                                longTag.put(glyphCode, new int[]{glyph.code,  glyph.width, glyph.chars.charAt(0)}); 
                             }
                         }
                         

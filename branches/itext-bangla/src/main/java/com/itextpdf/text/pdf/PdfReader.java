@@ -1,5 +1,5 @@
 /*
- * $Id: PdfReader.java 5639 2012-12-23 17:52:17Z psoares33 $
+ * $Id: PdfReader.java 5643 2012-12-29 11:55:46Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -622,7 +622,7 @@ public class PdfReader implements PdfViewerPreferences {
 
         strings.clear();
         readPages();
-        eliminateSharedStreams();
+        //eliminateSharedStreams();
         removeUnusedObjects();
 
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: TrueTypeFont.java 5557 2012-11-22 13:45:39Z blowagie $
+ * $Id: TrueTypeFont.java 5644 2013-01-01 16:10:42Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -195,7 +195,7 @@ class TrueTypeFont extends BaseFont {
     protected HashMap<Integer, int[]> cmapExt;
     
     private Map<String, Glyph> glyphSubstitutionMap;
-
+    
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
@@ -685,15 +685,15 @@ class TrueTypeFont extends BaseFont {
                         glyphToCharacterMap.put(glyphCode, c);
                     }
                     
-                    if (false) {
-                    	StringBuilder  sb = new StringBuilder(50);
-                        
-                        for (int glyphCode : glyphToCharacterMap.keySet()) {
-                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
-                        }
-                        
-                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
-                    }
+//                    if (false) {
+//                    	StringBuilder  sb = new StringBuilder(50);
+//                        
+//                        for (int glyphCode : glyphToCharacterMap.keySet()) {
+//                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
+//                        }
+//                        
+//                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
+//                    }
                 
                     GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     
@@ -701,7 +701,7 @@ class TrueTypeFont extends BaseFont {
                     try {
                         glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
                     } catch (FontReadingException e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
                     
                 }
@@ -711,19 +711,19 @@ class TrueTypeFont extends BaseFont {
                     gposReader.read();
                 }
                 
-                if (false) {
-                    StringBuilder sb = new StringBuilder(50);
-                    
-                    int count = 1;
-                    
-                    for (String chars : glyphSubstitutionMap.keySet()) {
-                        int glyphId = glyphSubstitutionMap.get(chars).code;
-                        sb.append(count++).append(".>");
-                        sb.append(chars).append(" => ").append(glyphId).append("\n");
-                    }
-                    
-                    System.out.println("glyphSubstitutionMap:\n" + sb.toString());
-                }
+//                if (false) {
+//                    StringBuilder sb = new StringBuilder(50);
+//                    
+//                    int count = 1;
+//                    
+//                    for (String chars : glyphSubstitutionMap.keySet()) {
+//                        int glyphId = glyphSubstitutionMap.get(chars).code;
+//                        sb.append(count++).append(".>");
+//                        sb.append(chars).append(" => ").append(glyphId).append("\n");
+//                    }
+//                    
+//                    System.out.println("glyphSubstitutionMap:\n" + sb.toString());
+//                }
                 
                 ////////////////////////////////////////////
                 
