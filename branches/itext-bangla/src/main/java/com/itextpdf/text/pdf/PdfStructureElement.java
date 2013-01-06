@@ -1,5 +1,5 @@
 /*
- * $Id: PdfStructureElement.java 5637 2012-12-21 12:34:22Z dkoleda $
+ * $Id: PdfStructureElement.java 5646 2013-01-03 09:07:40Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -229,6 +229,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((PdfPTableFooter)element);
         } else if (element instanceof PdfPTableBody) {
             writeAttributes((PdfPTableBody)element);
+        } else if (element instanceof PdfDiv) {
+            writeAttributes((PdfDiv)element);
+        } else if (element instanceof Document) {
+            writeAttributes((Document)element);
         }
         if (element.getAccessibleAttributes() != null) {
             for (PdfName key : element.getAccessibleAttributes().keySet()) {
@@ -478,7 +482,19 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
         }
     }
-    
+
+    private void writeAttributes(final PdfDiv div) {
+        if (div != null) {
+
+        }
+    }
+
+    private void writeAttributes(final Document document) {
+        if (document != null) {
+
+        }
+    }
+
     private boolean colorsEqual(PdfArray parentColor, float [] color){
         if (Float.compare(color[0], parentColor.getAsNumber(0).floatValue()) != 0){
             return false;

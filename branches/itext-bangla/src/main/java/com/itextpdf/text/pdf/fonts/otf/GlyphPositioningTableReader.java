@@ -71,7 +71,7 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         } else if (lookupType == 4) {
             readLookUpType_4(subTableLocation);
         } else {
-        	System.err.println("The lookupType " + lookupType + " is not yet supported");  
+        	System.err.println("The lookupType " + lookupType + " is not yet supported for " + GlyphPositioningTableReader.class.getSimpleName());   
         }
         
     }
@@ -86,7 +86,7 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     	
         int coverageOffset = rf.readShort();
         int valueFormat = rf.readShort();
-        System.out.println("valueFormat=" + valueFormat); 
+//        System.out.println("valueFormat=" + valueFormat); 
         
         //check if XPlacement should be read
         if  ((valueFormat & 1) == 1) {
@@ -109,21 +109,21 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         }
         
         int markCoverageOffset = rf.readShort();
-        System.out.println("markCoverageOffset=" + markCoverageOffset); 
+//        System.out.println("markCoverageOffset=" + markCoverageOffset); 
         int baseCoverageOffset = rf.readShort();
-        System.out.println("baseCoverageOffset=" + baseCoverageOffset); 
+//        System.out.println("baseCoverageOffset=" + baseCoverageOffset); 
         int classCount = rf.readShort();
-        System.out.println("classCount=" + classCount); 
+//        System.out.println("classCount=" + classCount); 
         int markArrayOffset = rf.readShort();
-        System.out.println("markArrayOffset=" + markArrayOffset); 
+//        System.out.println("markArrayOffset=" + markArrayOffset); 
         int baseArrayOffset = rf.readShort();
-        System.out.println("baseArrayOffset=" + baseArrayOffset); 
+//        System.out.println("baseArrayOffset=" + baseArrayOffset); 
         
         List<Integer> markCoverages = readCoverageFormat(lookupTableLocation + markCoverageOffset);
-        System.out.println("markCoverages=" + markCoverages.size());
+//        System.out.println("markCoverages=" + markCoverages.size());
         
         List<Integer> baseCoverages = readCoverageFormat(lookupTableLocation + baseCoverageOffset);
-        System.out.println("baseCoverages=" + baseCoverages.size());
+//        System.out.println("baseCoverages=" + baseCoverages.size());
         
         readMarkArrayTable(lookupTableLocation + markArrayOffset);
         
@@ -177,7 +177,7 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     		}
     	}
     	
-    	System.out.println(baseAnchors.size()); 
+//    	System.out.println(baseAnchors.size()); 
     	
     	for (int baseAnchor : baseAnchors) {
     		readAnchorTable(baseArrayTableLocation + baseAnchor);

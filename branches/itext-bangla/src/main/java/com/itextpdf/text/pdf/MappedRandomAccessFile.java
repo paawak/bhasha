@@ -1,5 +1,5 @@
 /*
- * $Id: MappedRandomAccessFile.java 5141 2012-05-12 12:36:18Z blowagie $
+ * $Id: MappedRandomAccessFile.java 5645 2013-01-02 18:47:45Z rafhens $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -179,7 +179,7 @@ public class MappedRandomAccessFile {
             if (offN > currentBuffer.limit())
                 break;
             currentBuffer.position(offN);
-            int bytesFromThisBuffer = Math.min(len, currentBuffer.remaining());
+            int bytesFromThisBuffer = Math.min(len - totalRead, currentBuffer.remaining());
             currentBuffer.get(bytes, off, bytesFromThisBuffer);
             off += bytesFromThisBuffer;
             pos += bytesFromThisBuffer;

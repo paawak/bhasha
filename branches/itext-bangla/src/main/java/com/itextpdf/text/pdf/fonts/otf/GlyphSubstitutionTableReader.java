@@ -143,7 +143,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
         } else if (lookupType == 4) {
             readLigatureSubstitutionSubtable(subTableLocation);
         } else {
-            System.err.println("LookupType " + lookupType + " is not yet handled");
+            System.err.println("LookupType " + lookupType + " is not yet handled for " + GlyphSubstitutionTableReader.class.getSimpleName());
         }
         
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: FontDetails.java 5644 2013-01-01 16:10:42Z psoares33 $
+ * $Id: FontDetails.java 5647 2013-01-05 17:23:19Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

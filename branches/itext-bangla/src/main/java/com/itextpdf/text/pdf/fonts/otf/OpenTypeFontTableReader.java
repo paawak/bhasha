@@ -74,7 +74,7 @@ public abstract class OpenTypeFontTableReader {
         
         rf.seek(lookupListTableLocation);
         int lookupCount = rf.readShort();
-        System.out.println("lookupCount=" + lookupCount);
+//        System.out.println("lookupCount=" + lookupCount);
 
         List<Integer> lookupTableOffsets = new ArrayList<Integer>();
 
@@ -168,10 +168,10 @@ public abstract class OpenTypeFontTableReader {
         int featureListOffset = rf.readUnsignedShort();
         int lookupListOffset = rf.readUnsignedShort();
 
-        System.out.println("version=" + version);
-        System.out.println("scriptListOffset=" + scriptListOffset);
-        System.out.println("featureListOffset=" + featureListOffset);
-        System.out.println("lookupListOffset=" + lookupListOffset);
+//        System.out.println("version=" + version);
+//        System.out.println("scriptListOffset=" + scriptListOffset);
+//        System.out.println("featureListOffset=" + featureListOffset);
+//        System.out.println("lookupListOffset=" + lookupListOffset);
         
         TableHeader header = new TableHeader(version, scriptListOffset, featureListOffset, lookupListOffset);
         

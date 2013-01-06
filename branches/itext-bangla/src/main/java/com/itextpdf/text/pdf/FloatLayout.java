@@ -1,5 +1,5 @@
 /*
- * $Id: FloatLayout.java 5578 2012-11-29 20:38:03Z eugenemark $
+ * $Id: FloatLayout.java 5646 2013-01-03 09:07:40Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -138,7 +138,9 @@ public class FloatLayout {
                     status = floatingElement.layout(canvas, useAscender, true, floatLeftX, minY, floatRightX, yLine);
 
                     if (!simulate) {
+                        canvas.openMCBlock(floatingElement);
                         status = floatingElement.layout(canvas, useAscender, simulate, floatLeftX, minY, floatRightX, yLine);
+                        canvas.closeMCBlock(floatingElement);
                     }
 
                     yLine -= floatingElement.getActualHeight();
