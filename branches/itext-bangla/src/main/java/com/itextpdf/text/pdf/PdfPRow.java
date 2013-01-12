@@ -1,5 +1,5 @@
 /*
- * $Id: PdfPRow.java 5591 2012-12-06 14:01:27Z achingarev $
+ * $Id: PdfPRow.java 5649 2013-01-10 12:09:52Z dkoleda $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -130,7 +130,10 @@ public class PdfPRow implements IAccessibleElement {
 		cells = new PdfPCell[row.cells.length];
 		for (int k = 0; k < cells.length; ++k) {
 			if (row.cells[k] != null)
-				cells[k] = new PdfPCell(row.cells[k]);
+                if (row.cells[k] instanceof PdfPHeaderCell)
+                    cells[k] = new PdfPHeaderCell((PdfPHeaderCell)row.cells[k]);
+                else
+				    cells[k] = new PdfPCell(row.cells[k]);
 		}
 		widths = new float[cells.length];
 		System.arraycopy(row.widths, 0, widths, 0, cells.length);

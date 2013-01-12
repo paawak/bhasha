@@ -171,7 +171,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
                 rawLigatureSubstitutionMap.put(substituteGlyphId, Arrays.asList(coverageGlyphId)); 
             }
         } else if (substFormat == 2) {
-            System.err.println("substFormat 2 is not yet handled");
+            System.err.println("substFormat 2 is not yet handled by " + GlyphSubstitutionTableReader.class.getSimpleName());
         } else {
             throw new IllegalArgumentException("Bad substFormat: " + substFormat);
         }

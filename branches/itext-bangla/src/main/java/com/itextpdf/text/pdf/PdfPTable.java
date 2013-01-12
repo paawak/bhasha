@@ -1,5 +1,5 @@
 /*
- * $Id: PdfPTable.java 5597 2012-12-07 12:25:48Z achingarev $
+ * $Id: PdfPTable.java 5649 2013-01-10 12:09:52Z dkoleda $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -290,7 +290,10 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         currentColIdx = 0;
         tableEvent = sourceTable.tableEvent;
         runDirection = sourceTable.runDirection;
-        defaultCell = new PdfPCell(sourceTable.defaultCell);
+        if (sourceTable.defaultCell instanceof PdfPHeaderCell)
+            defaultCell = new PdfPHeaderCell((PdfPHeaderCell)sourceTable.defaultCell);
+        else
+            defaultCell = new PdfPCell(sourceTable.defaultCell);
         currentRow = new PdfPCell[sourceTable.currentRow.length];
         isColspan = sourceTable.isColspan;
         splitRows = sourceTable.splitRows;
@@ -473,7 +476,14 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public PdfPCell addCell(final PdfPCell cell) {
         rowCompleted = false;
-        PdfPCell ncell = new PdfPCell(cell);
+        PdfPCell ncell;
+        if (cell instanceof PdfPHeaderCell){
+            ncell = new PdfPHeaderCell((PdfPHeaderCell)cell);
+        } else {
+
+            ncell = new PdfPCell(cell);
+        }
+
 
         int colspan = ncell.getColspan();
         colspan = Math.max(colspan, 1);

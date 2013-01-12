@@ -1,5 +1,5 @@
 /*
- * $Id: CertificateInfo.java 5193 2012-06-18 13:36:09Z blowagie $
+ * $Id: CertificateInfo.java 5650 2013-01-10 15:43:46Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -351,11 +351,13 @@ public class CertificateInfo {
 	 */
 	public static X500Name getSubjectFields(X509Certificate cert) {
 	    try {
-	        return new X500Name((ASN1Sequence)CertificateInfo.getSubject(cert.getTBSCertificate()));
+	    	if (cert != null)
+	    		return new X500Name((ASN1Sequence)CertificateInfo.getSubject(cert.getTBSCertificate()));
 	    }
 	    catch (Exception e) {
 	        throw new ExceptionConverter(e);
 	    }
+	    return null;
 	}
 
 	/**

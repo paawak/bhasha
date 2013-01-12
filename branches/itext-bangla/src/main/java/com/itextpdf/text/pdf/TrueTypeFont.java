@@ -1,5 +1,5 @@
 /*
- * $Id: TrueTypeFont.java 5647 2013-01-05 17:23:19Z psoares33 $
+ * $Id: TrueTypeFont.java 5651 2013-01-10 21:56:52Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -684,31 +684,35 @@ class TrueTypeFont extends BaseFont {
                         int glyphCode = cmap31.get(charCode)[0];
                         glyphToCharacterMap.put(glyphCode, c);
                     }
-                    
-//                    if (false) {
-//                    	StringBuilder  sb = new StringBuilder(50);
-//                        
-//                        for (int glyphCode : glyphToCharacterMap.keySet()) {
-//                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
-//                        }
-//                        
-//                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
-//                    }
+//                    
+////                    if (false) {
+////                    	StringBuilder  sb = new StringBuilder(50);
+////                        
+////                        for (int glyphCode : glyphToCharacterMap.keySet()) {
+////                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
+////                        }
+////                        
+////                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
+////                    }
                 
                     GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     
                     // failsafe
                     try {
                         glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
-                    } catch (FontReadingException e) {
+                    } catch (Exception e) {
 //                        e.printStackTrace();
                     }
                     
                 }
                 
                 if (tables.get("GPOS") != null) {
-                    GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
-                    gposReader.read();
+                    try {
+                        GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
+                        gposReader.read();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 
 //                if (false) {
