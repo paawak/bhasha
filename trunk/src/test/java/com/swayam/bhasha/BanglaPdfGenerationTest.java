@@ -40,16 +40,18 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class BanglaPdfGenerationTest {
 
-    /**
-     * The unicode of this is given below:
-     * 
-     * \u0986\u09ae\u09bf \u0995\u09cb\u09a8 \u09aa\u09a5\u09c7
-     * \u0995\u09cd\u09b7\u09c0\u09b0\u09c7\u09b0 \u09b7\u09a8\u09cd\u09a1
-     * \u09aa\u09c1\u09a4\u09c1\u09b2 \u09b0\u09c1\u09aa\u09cb
-     * \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf
-     * 
-     */
-    private static final String BANGLA_TEXT = "আমি কোন পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
+//    /**
+//     * The unicode of this is given below:
+//     * 
+//     * \u0986\u09ae\u09bf \u0995\u09cb\u09a8 \u09aa\u09a5\u09c7
+//     * \u0995\u09cd\u09b7\u09c0\u09b0\u09c7\u09b0 \u09b7\u09a8\u09cd\u09a1
+//     * \u09aa\u09c1\u09a4\u09c1\u09b2 \u09b0\u09c1\u09aa\u09cb
+//     * \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf
+//     * 
+//     */
+//    private static final String BANGLA_TEXT = "আমি কোন পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
+    
+    private static final String BANGLA_TEXT = "আমি ঝরের কাছে রেখে গেলাম আমার ঠিকানা মিশরের মমি";
 
     private static final String BANGLA_FONT = "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
 //    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
