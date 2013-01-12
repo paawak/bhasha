@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -50,7 +51,8 @@ public class BanglaPdfGenerationTest {
      */
     private static final String BANGLA_TEXT = "আমি কোন পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
 
-    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
+    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
+//    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
 //    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
 
     // private static final String BANGLA_FONT =
@@ -65,10 +67,13 @@ public class BanglaPdfGenerationTest {
         document.open();
         // step 4
         Paragraph paragraph = new Paragraph();
-        paragraph.add(new Phrase(BANGLA_TEXT, new Font(
+        Font font = new Font(
         		BaseFont.createFont(
         				BanglaPdfGenerationTest.class.getResource(BANGLA_FONT).getFile(),
-        				BaseFont.IDENTITY_H, true))));
+        				BaseFont.IDENTITY_H, false));
+        font.setColor(BaseColor.BLUE);
+        font.setSize(20);
+        paragraph.add(new Phrase(BANGLA_TEXT, font));
         document.add(paragraph);
         // step 5
         document.close();
