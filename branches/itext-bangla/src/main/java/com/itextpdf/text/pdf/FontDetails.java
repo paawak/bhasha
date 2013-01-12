@@ -213,113 +213,43 @@ class FontDetails {
             }
             case BaseFont.FONT_TYPE_TTUNI: {
                 try {
-                    
-                    Map<String, Glyph> glyphSubstitutionMap = ttu.getGlyphSubstitutionMap();
-                    
-                    if (glyphSubstitutionMap == null) {
-                    
-                        int len = text.length();
-                        int metrics[] = null;
-                        char glyph[] = new char[len];
-                        int i = 0;
-                        if (symbolic) {
-                            b = PdfEncodings.convertToBytes(text, "symboltt");
-                            len = b.length;
-                            for (int k = 0; k < len; ++k) {
-                                metrics = ttu.getMetricsTT(b[k] & 0xff);
-                                if (metrics == null)
-                                    continue;
-                                longTag.put(Integer.valueOf(metrics[0]), new int[]{metrics[0], metrics[1], ttu.getUnicodeDifferences(b[k] & 0xff)});
-                                glyph[i++] = (char)metrics[0];
-                            }
+                    int len = text.length();
+                    int metrics[] = null;
+                    char glyph[] = new char[len];
+                    int i = 0;
+                    if (symbolic) {
+                        b = PdfEncodings.convertToBytes(text, "symboltt");
+                        len = b.length;
+                        for (int k = 0; k < len; ++k) {
+                            metrics = ttu.getMetricsTT(b[k] & 0xff);
+                            if (metrics == null)
+                                continue;
+                            longTag.put(Integer.valueOf(metrics[0]), new int[]{metrics[0], metrics[1], ttu.getUnicodeDifferences(b[k] & 0xff)});
+                            glyph[i++] = (char)metrics[0];
                         }
-                        else {
-                        	for (int k = 0; k < len; ++k) {
-                        		int val;
-                        		if (Utilities.isSurrogatePair(text, k)) {
-                        			val = Utilities.convertToUtf32(text, k);
-                        			k++;
-                        		}
-                        		else {
-                        			val = text.charAt(k);
-                        		}
-                        		metrics = ttu.getMetricsTT(val);
-                        		if (metrics == null)
-                        			continue;
-                        		int m0 = metrics[0];
-                        		Integer gl = Integer.valueOf(m0);
-                        		if (!longTag.containsKey(gl))
-                        			longTag.put(gl, new int[]{m0, metrics[1], val});
-                        		glyph[i++] = (char)m0;
-                        	}
-                        }
-                        String s = new String(glyph, 0, i);
-                        b = s.getBytes(CJKFont.CJK_ENCODING);
-                    
-                    } else {
-                        // generate a regex from the characters to be substituted
-                        
-                        // for Indic languages: push back the CompositeCharacters with smaller length
-                        Set<String> compositeCharacters = new TreeSet<String>(new IndicCompositeCharacterComparator());
-                        compositeCharacters.addAll(glyphSubstitutionMap.keySet());
-                        
-//                        List<String> compositeCharacters = new ArrayList<String>();
-//                        
-//                        for (String glyphSubKey : glyphSubstitutionMap.keySet()) {
-//                        	compositeCharacters.add(0, glyphSubKey);
-//                        }
-                        
-//                        System.out.println("compositeCharacters=" + compositeCharacters); 
-                        
-                        // convert the text to a list of Glyph, also take care of the substitution
-                        ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(compositeCharacters.toArray(new String[0]));
-                        String[] tokens = tokenizer.tokenize(text);
-                        
-                        List<Glyph> glyphList = new ArrayList<Glyph>(50);
-                        
-                        for (String token : tokens) {
-                            
-                            // first check whether this is in the substitution map
-                            Glyph subsGlyph = glyphSubstitutionMap.get(token);
-                            
-                            if (subsGlyph != null) {
-                                glyphList.add(subsGlyph);
-                            } else {
-                                // break up the string into individual characters
-                                for (char c : token.toCharArray()) {
-                                    int[] metrics = ttu.getMetricsTT(c);
-                                    int glyphCode = metrics[0];
-                                    int glyphWidth = metrics[1];
-                                    glyphList.add(new Glyph(glyphCode, glyphWidth, String.valueOf(c))); 
-                                }
-                            }
-                            
-                        }
-                        
-                        char[] charEncodedGlyphCodes = new char[glyphList.size()];
-                        
-                        // process each Glyph thus obtained
-                        for (int i = 0; i < glyphList.size(); i++) {
-                            Glyph glyph = glyphList.get(i); 
-                            charEncodedGlyphCodes[i] = (char) glyph.code;
-                            Integer glyphCode = Integer.valueOf(glyph.code);
-                            
-//                            if (glyphCode == 101) {
-//                             	System.err.println("*******************");
-//                             	//get the previous entry
-//                             	Glyph previousGlyph = glyphList.get(i - 1); 
-//                             	longTag.get(previousGlyph.code)[1] = 0;
-//                             }
-                            
-                            if (!longTag.containsKey(glyphCode)) {
-                                // FIXME: this is buggy as the 3rd arg. should be a String as a Glyph can represent more than 1 char
-                                longTag.put(glyphCode, new int[]{glyph.code,  glyph.width, glyph.chars.charAt(0)}); 
-                            }
-                        }
-                        
-                        b = new String(charEncodedGlyphCodes).getBytes(CJKFont.CJK_ENCODING);
-                        
                     }
+                    else {
+                    	for (int k = 0; k < len; ++k) {
+                    		int val;
+                    		if (Utilities.isSurrogatePair(text, k)) {
+                    			val = Utilities.convertToUtf32(text, k);
+                    			k++;
+                    		}
+                    		else {
+                    			val = text.charAt(k);
+                    		}
+                    		metrics = ttu.getMetricsTT(val);
+                    		if (metrics == null)
+                    			continue;
+                    		int m0 = metrics[0];
+                    		Integer gl = Integer.valueOf(m0);
+                    		if (!longTag.containsKey(gl))
+                    			longTag.put(gl, new int[]{m0, metrics[1], val});
+                    		glyph[i++] = (char)m0;
+                    	}
+                    }
+                    String s = new String(glyph, 0, i);
+                    b = s.getBytes(CJKFont.CJK_ENCODING);
                 }
                 catch (UnsupportedEncodingException e) {
                     throw new ExceptionConverter(e);
@@ -329,6 +259,94 @@ class FontDetails {
         }
         return b;
     }
+    
+    boolean needIndividulaGlyphPlacement(String text) {
+    	return (fontType == BaseFont.FONT_TYPE_TTUNI)
+    			&& (ttu.getGlyphSubstitutionMap() != null);
+    }
+    
+    List<Glyph> convertToGlyphs(String text) {
+    	
+    	if (!needIndividulaGlyphPlacement(text)) {
+    		throw new IllegalArgumentException("Make sure the font type if TTF Unicode and a valid GlyphSubstitutionTable exists!"); 
+    	}
+    	
+    	 Map<String, Glyph> glyphSubstitutionMap = ttu.getGlyphSubstitutionMap();
+    	
+        // generate a regex from the characters to be substituted
+        
+        // for Indic languages: push back the CompositeCharacters with smaller length
+        Set<String> compositeCharacters = new TreeSet<String>(new IndicCompositeCharacterComparator());
+        compositeCharacters.addAll(glyphSubstitutionMap.keySet());
+        
+//        List<String> compositeCharacters = new ArrayList<String>();
+//        
+//        for (String glyphSubKey : glyphSubstitutionMap.keySet()) {
+//        	compositeCharacters.add(0, glyphSubKey);
+//        }
+        
+//        System.out.println("compositeCharacters=" + compositeCharacters); 
+        
+        // convert the text to a list of Glyph, also take care of the substitution
+        ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(compositeCharacters.toArray(new String[0]));
+        String[] tokens = tokenizer.tokenize(text);
+        
+        List<Glyph> glyphList = new ArrayList<Glyph>(50);
+        
+        for (String token : tokens) {
+            
+            // first check whether this is in the substitution map
+            Glyph subsGlyph = glyphSubstitutionMap.get(token);
+            
+            if (subsGlyph != null) {
+                glyphList.add(subsGlyph);
+            } else {
+                // break up the string into individual characters
+                for (char c : token.toCharArray()) {
+                    int[] metrics = ttu.getMetricsTT(c);
+                    int glyphCode = metrics[0];
+                    int glyphWidth = metrics[1];
+                    glyphList.add(new Glyph(glyphCode, glyphWidth, String.valueOf(c))); 
+                }
+            }
+            
+        }
+        
+        char[] charEncodedGlyphCodes = new char[glyphList.size()];
+        
+        // process each Glyph thus obtained
+        for (int i = 0; i < glyphList.size(); i++) {
+            Glyph glyph = glyphList.get(i); 
+            charEncodedGlyphCodes[i] = (char) glyph.code;
+            Integer glyphCode = Integer.valueOf(glyph.code);
+            
+//            if (glyphCode == 101) {
+//             	System.err.println("*******************");
+//             	//get the previous entry
+//             	Glyph previousGlyph = glyphList.get(i - 1); 
+//             	longTag.get(previousGlyph.code)[1] = 0;
+//             }
+            
+            if (!longTag.containsKey(glyphCode)) {
+                // FIXME: this is buggy as the 3rd arg. should be a String as a Glyph can represent more than 1 char
+                longTag.put(glyphCode, new int[]{glyph.code,  glyph.width, glyph.chars.charAt(0)}); 
+            }
+        }
+        
+        return glyphList;
+        
+    }
+    
+    static byte[] convertGlyphToBytes(Glyph glyph) { 
+    	try {
+    		char[] charArray = new char[1];
+    		charArray[0] = (char) glyph.code;
+			return new String(charArray).getBytes(CJKFont.CJK_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			 throw new ExceptionConverter(e);
+		}
+    }
+    
 
     /**
      * Writes the font definition to the document.
@@ -371,7 +389,7 @@ class FontDetails {
             throw new ExceptionConverter(e);
         }
     }
-
+    
     /**
      * Indicates if all the glyphs and widths for that particular
      * encoding should be included in the document.

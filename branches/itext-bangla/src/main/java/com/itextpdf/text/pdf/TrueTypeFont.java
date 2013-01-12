@@ -684,16 +684,8 @@ class TrueTypeFont extends BaseFont {
                         int glyphCode = cmap31.get(charCode)[0];
                         glyphToCharacterMap.put(glyphCode, c);
                     }
-//                    
-////                    if (false) {
-////                    	StringBuilder  sb = new StringBuilder(50);
-////                        
-////                        for (int glyphCode : glyphToCharacterMap.keySet()) {
-////                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
-////                        }
-////                        
-////                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
-////                    }
+                    
+                   
                 
                     GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     
@@ -702,6 +694,30 @@ class TrueTypeFont extends BaseFont {
                         glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
                     } catch (Exception e) {
 //                        e.printStackTrace();
+                    }
+                    
+                    if (true) {
+                    	StringBuilder  sb = new StringBuilder(50);
+                        
+                        for (int glyphCode : glyphToCharacterMap.keySet()) {
+                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
+                        }
+                        
+                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
+                    }
+                    
+                    if (true) {
+                        StringBuilder sb = new StringBuilder(50);
+                        
+                        int count = 1;
+                        
+                        for (String chars : glyphSubstitutionMap.keySet()) {
+                            int glyphId = glyphSubstitutionMap.get(chars).code;
+                            sb.append(count++).append(".>");
+                            sb.append(chars).append(" => ").append(glyphId).append("\n");
+                        }
+                        
+                        System.out.println("glyphSubstitutionMap:\n" + sb.toString());
                     }
                     
                 }
@@ -714,20 +730,6 @@ class TrueTypeFont extends BaseFont {
                         e.printStackTrace();
                     }
                 }
-                
-//                if (false) {
-//                    StringBuilder sb = new StringBuilder(50);
-//                    
-//                    int count = 1;
-//                    
-//                    for (String chars : glyphSubstitutionMap.keySet()) {
-//                        int glyphId = glyphSubstitutionMap.get(chars).code;
-//                        sb.append(count++).append(".>");
-//                        sb.append(chars).append(" => ").append(glyphId).append("\n");
-//                    }
-//                    
-//                    System.out.println("glyphSubstitutionMap:\n" + sb.toString());
-//                }
                 
                 ////////////////////////////////////////////
                 

@@ -50,13 +50,13 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -1654,8 +1654,48 @@ public class PdfContentByte {
     private void showText2(final String text) {
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
-        byte b[] = state.fontDetails.convertToBytes(text);
-        escapeString(b, content);
+        
+        if ( state.fontDetails.needIndividulaGlyphPlacement(text)) {
+        	List<Glyph> glyphs = state.fontDetails.convertToGlyphs(text);
+        	for (int i = 0; i < glyphs.size(); i++) {
+        		Glyph glyph = glyphs.get(i);
+        		 escapeString(FontDetails.convertGlyphToBytes(glyph), content);
+        		 
+        		 Glyph previousGlyph = getPreviousGlyph(glyphs, i);
+        		 Glyph nextGlyph = getNextGlyph(glyphs, i);
+        		 
+        		 if ((nextGlyph != null) && nextGlyph.chars.equals("\u09bf"))  { 
+        			 content.append(nextGlyph.width + glyph.width-80);
+        		 } else if ((previousGlyph != null) && glyph.chars.equals("\u09bf")) {
+        			 
+        			 int displacement = -glyph.width;
+        			 if ((nextGlyph != null) && nextGlyph.chars.contains(" ")) {
+        				 displacement -= -nextGlyph.width;
+        			 }
+        			 content.append(displacement);
+        		 }
+        	}
+        } else {
+        	 byte b[] = state.fontDetails.convertToBytes(text);
+             escapeString(b, content);
+        }
+       
+    }
+    
+    private Glyph getPreviousGlyph(List<Glyph> glyphs, int currentIndex) {
+    	if (currentIndex > 0) {
+    		return glyphs.get(currentIndex - 1);
+    	} else {
+    		return null;
+    	}
+    }
+    
+    private Glyph getNextGlyph(List<Glyph> glyphs, int currentIndex) {
+    	if (currentIndex + 1 < glyphs.size()) {
+    		return glyphs.get(currentIndex + 1);
+    	} else {
+    		return null;
+    	}
     }
 
     /**
@@ -1667,9 +1707,10 @@ public class PdfContentByte {
         if (!inText && writer.isTagged()) {
             beginText(true);
         }
+        content.append("[");
         showText2(text);
         updateTx(text, 0);
-        content.append("Tj").append_i(separator);
+        content.append("]TJ").append_i(separator);
     }
 
     /**
