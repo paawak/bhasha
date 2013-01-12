@@ -79,8 +79,8 @@ public class ArrayBasedStringTokenizerTest {
     @Test
     public void testTokenize_Bangla() {
         //given
-        ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(new String[]{"\u0995\u09cd\u09b7", "প�?"});
-        String text = "আমি কোন পথে ক�?ষীরের ষন�?ড প�?ত�?ল র�?পো গঙ�?গা ঋষি";
+        ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(new String[]{"\u0995\u09cd\u09b7", "\u09aa\u09c1\u09a4\u09c1"});
+        String text = "\u0986\u09ae\u09bf \u0995\u09cb\u09a8 \u09aa\u09a5\u09c7  \u0995\u09cd\u09b7\u09c0\u09b0\u09c7\u09b0 \u09b7\u09a8\u09cd\u09a1  \u09aa\u09c1\u09a4\u09c1\u09b2 \u09b0\u09c1\u09aa\u09cb  \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf";
         
         //when
         String[] tokens = tokenizer.tokenize(text);
@@ -95,8 +95,8 @@ public class ArrayBasedStringTokenizerTest {
         
         List<String> tokenList = Arrays.asList(tokens);
         
-        assertTrue(tokenList.contains("ক�?ষ"));
-        assertTrue(tokenList.contains("প�?")); 
+        assertTrue(tokenList.contains("\u0995\u09cd\u09b7"));
+        assertTrue(tokenList.contains("\u09aa\u09c1\u09a4\u09c1")); 
     }
 
 }

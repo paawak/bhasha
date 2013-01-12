@@ -70,8 +70,10 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
             readLookUpType_1(subTableLocation);
         } else if (lookupType == 4) {
             readLookUpType_4(subTableLocation);
+        } else if (lookupType == 8) {
+        	readLookUpType_8(subTableLocation);
         } else {
-        	System.err.println("The lookupType " + lookupType + " is not yet supported for " + GlyphPositioningTableReader.class.getSimpleName());   
+        	System.err.println("The lookupType " + lookupType + " is not yet supported by " + GlyphPositioningTableReader.class.getSimpleName());   
         }
         
     }
@@ -80,23 +82,30 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     	rf.seek(lookupTableLocation);
     	int posFormat = rf.readShort();
     	
-    	if (posFormat != 1) {
-    		System.err.println("The PosFormat " + posFormat + " is not yet supported!");
+    	if (posFormat == 1) {
+            int coverageOffset = rf.readShort();
+            int valueFormat = rf.readShort();
+//            System.out.println("valueFormat=" + valueFormat); 
+            
+            //check if XPlacement should be read
+            if  ((valueFormat & 1) == 1) {
+            	int xPlacement = rf.readShort();
+            	System.out.println("xPlacement=" + xPlacement); 
+            }
+            
+           //check if YPlacement should be read
+            if  ((valueFormat & 2) ==2) {
+            	int yPlacement = rf.readShort();
+            	System.out.println("yPlacement=" + yPlacement); 
+            }
+            
+            List<Integer> glyphCodes = readCoverageFormat(lookupTableLocation + coverageOffset);
+            
+            System.out.println("glyphCodes=" + glyphCodes); 
+    	} else {
+    		System.err.println("The PosFormat " + posFormat + " is not yet supported by " + GlyphPositioningTableReader.class.getSimpleName());
     	}
-    	
-        int coverageOffset = rf.readShort();
-        int valueFormat = rf.readShort();
-//        System.out.println("valueFormat=" + valueFormat); 
         
-        //check if XPlacement should be read
-        if  ((valueFormat & 1) == 1) {
-        	int xPlacement = rf.readShort();
-        }
-        
-       //check if YPlacement should be read
-        if  ((valueFormat & 2) ==2) {
-        	int yPlacement = rf.readShort();
-        }
     }
     
     private void readLookUpType_4(int lookupTableLocation) throws IOException {
@@ -104,31 +113,76 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         
         int posFormat = rf.readShort();
         
-        if (posFormat != 1) {
-            throw new IllegalArgumentException("The posFormat is expected to be 1");
+        if (posFormat == 1) {
+            int markCoverageOffset = rf.readShort();
+            int baseCoverageOffset = rf.readShort();
+            int classCount = rf.readShort();
+            int markArrayOffset = rf.readShort();
+            int baseArrayOffset = rf.readShort();
+            
+            List<Integer> markCoverages = readCoverageFormat(lookupTableLocation + markCoverageOffset);
+            System.out.println("markCoverages=" + markCoverages);
+            
+            List<Integer> baseCoverages = readCoverageFormat(lookupTableLocation + baseCoverageOffset);
+            System.out.println("baseCoverages=" + baseCoverages);
+            
+            readMarkArrayTable(lookupTableLocation + markArrayOffset);
+            
+            readBaseArrayTable(lookupTableLocation + baseArrayOffset, classCount);
+        } else {
+        	System.err.println("The posFormat " + posFormat + " is not supported by " + GlyphPositioningTableReader.class.getSimpleName());
+        }
+    }
+    
+    private void readLookUpType_8(int lookupTableLocation) throws IOException {
+        rf.seek(lookupTableLocation);
+        
+        int posFormat = rf.readShort();
+        
+        if (posFormat == 3) {
+        	readChainingContextPositioningFormat_3(lookupTableLocation);
+        } else {
+        	System.err.println("The posFormat " + posFormat + " is not supported by " + GlyphPositioningTableReader.class.getSimpleName());
+        }
+    }
+    
+    private void readChainingContextPositioningFormat_3(int lookupTableLocation) throws IOException {
+        int backtrackGlyphCount = rf.readShort();
+        List<Integer> coverageOffsets =  new ArrayList<Integer>(backtrackGlyphCount);
+        
+        for (int i = 0; i < backtrackGlyphCount; i++) {
+        	int coverageOffset = rf.readShort();
+        	coverageOffsets.add(coverageOffset);
         }
         
-        int markCoverageOffset = rf.readShort();
-//        System.out.println("markCoverageOffset=" + markCoverageOffset); 
-        int baseCoverageOffset = rf.readShort();
-//        System.out.println("baseCoverageOffset=" + baseCoverageOffset); 
-        int classCount = rf.readShort();
-//        System.out.println("classCount=" + classCount); 
-        int markArrayOffset = rf.readShort();
-//        System.out.println("markArrayOffset=" + markArrayOffset); 
-        int baseArrayOffset = rf.readShort();
-//        System.out.println("baseArrayOffset=" + baseArrayOffset); 
+        int inputGlyphCount = rf.readShort();
+        List<Integer>inputGlyphOffsets =  new ArrayList<Integer>(inputGlyphCount);
         
-        List<Integer> markCoverages = readCoverageFormat(lookupTableLocation + markCoverageOffset);
-//        System.out.println("markCoverages=" + markCoverages.size());
+        for (int i = 0; i < inputGlyphCount; i++) {
+        	int inputGlyphOffset = rf.readShort();
+        	inputGlyphOffsets.add(inputGlyphOffset);
+        }
         
-        List<Integer> baseCoverages = readCoverageFormat(lookupTableLocation + baseCoverageOffset);
-//        System.out.println("baseCoverages=" + baseCoverages.size());
+        int lookaheadGlyphCount = rf.readShort();
+        List<Integer>lookaheadGlyphOffsets =  new ArrayList<Integer>(lookaheadGlyphCount);
         
-        readMarkArrayTable(lookupTableLocation + markArrayOffset);
+        for (int i = 0; i < lookaheadGlyphCount; i++) {
+        	int lookaheadGlyphOffset = rf.readShort();
+        	lookaheadGlyphOffsets.add(lookaheadGlyphOffset);
+        }
         
-        readBaseArrayTable(lookupTableLocation + baseArrayOffset, classCount);
+        int posCount = rf.readShort();
+        System.out.println("posCount=" + posCount);
         
+        List<PosLookupRecord> posLookupRecords = new ArrayList<PosLookupRecord>(posCount);
+        
+        for (int i = 0; i < posCount; i++) {
+        	int sequenceIndex  = rf.readShort();
+        	int lookupListIndex  = rf.readShort();
+        	System.out.println("sequenceIndex=" + sequenceIndex + ", lookupListIndex=" + lookupListIndex); 
+        	posLookupRecords.add(new PosLookupRecord(sequenceIndex, lookupListIndex));
+        }
+
     }
     
     private void readMarkArrayTable(int markArrayLocation) throws IOException {
@@ -192,6 +246,17 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
 		public MarkRecord(int markClass, int markAnchorOffset) {
 			this.markClass = markClass;
 			this.markAnchorOffset = markAnchorOffset;
+		}
+		
+    }
+    
+    static class PosLookupRecord {
+    	final int sequenceIndex;
+    	final int lookupListIndex;
+    	
+		public PosLookupRecord(int sequenceIndex, int lookupListIndex) {
+			this.sequenceIndex = sequenceIndex;
+			this.lookupListIndex = lookupListIndex;
 		}
 		
     }

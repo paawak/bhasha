@@ -696,7 +696,7 @@ class TrueTypeFont extends BaseFont {
 //                        e.printStackTrace();
                     }
                     
-                    if (true) {
+                    if (false) {
                     	StringBuilder  sb = new StringBuilder(50);
                         
                         for (int glyphCode : glyphToCharacterMap.keySet()) {
@@ -706,7 +706,7 @@ class TrueTypeFont extends BaseFont {
                         System.out.println("glyphToCharacterMap:\n" + sb.toString());
                     }
                     
-                    if (true) {
+                    if (false) {
                         StringBuilder sb = new StringBuilder(50);
                         
                         int count = 1;
