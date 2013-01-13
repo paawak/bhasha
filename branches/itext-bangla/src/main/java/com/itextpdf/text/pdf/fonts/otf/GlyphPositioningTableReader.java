@@ -83,6 +83,7 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     	int posFormat = rf.readShort();
     	
     	if (posFormat == 1) {
+    		System.out.println("Reading `Look Up Type 1, Format 1` ....");
             int coverageOffset = rf.readShort();
             int valueFormat = rf.readShort();
 //            System.out.println("valueFormat=" + valueFormat); 
@@ -103,7 +104,7 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
             
             System.out.println("glyphCodes=" + glyphCodes); 
     	} else {
-    		System.err.println("The PosFormat " + posFormat + " is not yet supported by " + GlyphPositioningTableReader.class.getSimpleName());
+    		System.err.println("The PosFormat " + posFormat + " for `LookupType 1` is not yet supported by " + GlyphPositioningTableReader.class.getSimpleName());
     	}
         
     }
@@ -114,6 +115,9 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         int posFormat = rf.readShort();
         
         if (posFormat == 1) {
+        	
+        	System.out.println("Reading `Look Up Type 4, Format 1` ....");
+        	
             int markCoverageOffset = rf.readShort();
             int baseCoverageOffset = rf.readShort();
             int classCount = rf.readShort();
@@ -140,22 +144,25 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         int posFormat = rf.readShort();
         
         if (posFormat == 3) {
+        	System.out.println("Reading `Look Up Type 8, Format 3` ....");
         	readChainingContextPositioningFormat_3(lookupTableLocation);
         } else {
-        	System.err.println("The posFormat " + posFormat + " is not supported by " + GlyphPositioningTableReader.class.getSimpleName());
+        	System.err.println("The posFormat " + posFormat + " for `Look Up Type 8` is not supported by " + GlyphPositioningTableReader.class.getSimpleName());
         }
     }
     
     private void readChainingContextPositioningFormat_3(int lookupTableLocation) throws IOException {
         int backtrackGlyphCount = rf.readShort();
-        List<Integer> coverageOffsets =  new ArrayList<Integer>(backtrackGlyphCount);
+        System.out.println("backtrackGlyphCount=" + backtrackGlyphCount); 
+        List<Integer> backtrackGlyphOffsets =  new ArrayList<Integer>(backtrackGlyphCount);
         
         for (int i = 0; i < backtrackGlyphCount; i++) {
-        	int coverageOffset = rf.readShort();
-        	coverageOffsets.add(coverageOffset);
+        	int backtrackGlyphOffset = rf.readShort();
+        	backtrackGlyphOffsets.add(backtrackGlyphOffset);
         }
         
         int inputGlyphCount = rf.readShort();
+        System.out.println("inputGlyphCount=" + inputGlyphCount); 
         List<Integer>inputGlyphOffsets =  new ArrayList<Integer>(inputGlyphCount);
         
         for (int i = 0; i < inputGlyphCount; i++) {
@@ -164,6 +171,7 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         }
         
         int lookaheadGlyphCount = rf.readShort();
+        System.out.println("lookaheadGlyphCount=" + lookaheadGlyphCount); 
         List<Integer>lookaheadGlyphOffsets =  new ArrayList<Integer>(lookaheadGlyphCount);
         
         for (int i = 0; i < lookaheadGlyphCount; i++) {
@@ -181,6 +189,21 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         	int lookupListIndex  = rf.readShort();
         	System.out.println("sequenceIndex=" + sequenceIndex + ", lookupListIndex=" + lookupListIndex); 
         	posLookupRecords.add(new PosLookupRecord(sequenceIndex, lookupListIndex));
+        }
+        
+        for (int backtrackGlyphOffset : backtrackGlyphOffsets) {
+        	List<Integer> backtrackGlyphs = readCoverageFormat(lookupTableLocation + backtrackGlyphOffset);
+        	System.out.println("backtrackGlyphs=" + backtrackGlyphs);
+        }
+        
+        for (int inputGlyphOffset : inputGlyphOffsets) {
+        	List<Integer> inputGlyphs = readCoverageFormat(lookupTableLocation + inputGlyphOffset);
+        	System.out.println("inputGlyphs=" + inputGlyphs);
+        }
+        
+        for (int lookaheadGlyphOffset : lookaheadGlyphOffsets) {
+        	List<Integer> lookaheadGlyphs = readCoverageFormat(lookupTableLocation + lookaheadGlyphOffset);
+        	System.out.println("lookaheadGlyphs=" + lookaheadGlyphs);
         }
 
     }

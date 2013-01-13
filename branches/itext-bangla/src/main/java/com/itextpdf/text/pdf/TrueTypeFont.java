@@ -703,7 +703,7 @@ class TrueTypeFont extends BaseFont {
                         	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
                         }
                         
-                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
+                        System.out.println("GlyphToCharacterMap:\n" + sb.toString());
                     }
                     
                     if (false) {
@@ -717,7 +717,7 @@ class TrueTypeFont extends BaseFont {
                             sb.append(chars).append(" => ").append(glyphId).append("\n");
                         }
                         
-                        System.out.println("glyphSubstitutionMap:\n" + sb.toString());
+                        System.out.println("GlyphSubstitutionMap:\n" + sb.toString());
                     }
                     
                 }
@@ -792,7 +792,8 @@ class TrueTypeFont extends BaseFont {
         GlyphWidths = new int[hhea.numberOfHMetrics];
         for (int k = 0; k < hhea.numberOfHMetrics; ++k) {
             GlyphWidths[k] = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
-            rf.readUnsignedShort();
+            int leftSideBearing = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
+            System.out.println("GlyphCode=" + k + ", width=" + GlyphWidths[k] + ", leftSideBearing=" + leftSideBearing); 
         }
     }
 
