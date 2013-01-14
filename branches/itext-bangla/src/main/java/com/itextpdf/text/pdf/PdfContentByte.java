@@ -1664,43 +1664,13 @@ public class PdfContentByte {
        
     }
     
-    private void showTextThatNeedIndividualPlacement(final String text) {
-    	List<Glyph> glyphs = state.fontDetails.convertToGlyphs(text);
-    	for (int i = 0; i < glyphs.size(); i++) {
-    		Glyph glyph = glyphs.get(i);
-    		 escapeString(FontDetails.convertGlyphToBytes(glyph), content);
-    		 
-    		 Glyph previousGlyph = getPreviousGlyph(glyphs, i);
-    		 Glyph nextGlyph = getNextGlyph(glyphs, i);
-    		 
-    		 if ((nextGlyph != null) && nextGlyph.chars.equals("\u09bf"))  { 
-    			 content.append(nextGlyph.width + glyph.width-80);
-    		 } else if ((previousGlyph != null) && glyph.chars.equals("\u09bf")) {
-    			 
-    			 int displacement = -glyph.width;
-    			 if ((nextGlyph != null) && nextGlyph.chars.contains(" ")) {
-    				 displacement -= -nextGlyph.width;
-    			 }
-    			 content.append(displacement);
-    		 }
-    	}
-    }
-    
-    private Glyph getPreviousGlyph(List<Glyph> glyphs, int currentIndex) {
-    	if (currentIndex > 0) {
-    		return glyphs.get(currentIndex - 1);
-    	} else {
-    		return null;
-    	}
-    }
-    
-    private Glyph getNextGlyph(List<Glyph> glyphs, int currentIndex) {
-    	if (currentIndex + 1 < glyphs.size()) {
-    		return glyphs.get(currentIndex + 1);
-    	} else {
-    		return null;
-    	}
-    }
+	private void showTextThatNeedIndividualPlacement(final String text) {
+		List<Glyph> glyphs = state.fontDetails.convertToGlyphs(text);
+		for (int i = 0; i < glyphs.size(); i++) {
+			Glyph glyph = glyphs.get(i);
+			escapeString(FontDetails.convertGlyphToBytes(glyph), content);
+		}
+	}
 
     /**
      * Shows the <CODE>text</CODE>.

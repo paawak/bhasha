@@ -1,5 +1,5 @@
 /*
- * $Id: BidiLine.java 5576 2012-11-29 09:23:21Z achingarev $
+ * $Id: BidiLine.java 5655 2013-01-13 10:58:05Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -357,8 +357,10 @@ public class BidiLine {
             if (ck.isImage() && minY < yLine) {
                 Image img = ck.getImage();
                 if (img.isScaleToFitLineWhenOverflow() && yLine + 2 * descender - img.getScaledHeight() - ck.getImageOffsetY() - img.getSpacingBefore() < minY) {
-                    float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight() * 100;
-            		img.scalePercent(scalePercent);
+                    //float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight() * 100;
+            		//img.scalePercent(scalePercent);
+                    float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight();
+                	ck.setImageScalePercentage(scalePercent);
                 }
             }
             surrogate = Utilities.isSurrogatePair(text, currentChar);
@@ -381,8 +383,10 @@ public class BidiLine {
             	if (lastValidChunk == null && ck.isImage()) {
             		Image img = ck.getImage();
             		if (img.isScaleToFitLineWhenOverflow()) {
-            			float scalePercent = width / img.getWidth() * 100;
-            			img.scalePercent(scalePercent);
+            			//float scalePercent = width / img.getWidth() * 100;
+            			//img.scalePercent(scalePercent);
+            			float scalePercent = width / img.getWidth();
+            			ck.setImageScalePercentage(scalePercent);
             			charWidth = width;
             		}
             	}

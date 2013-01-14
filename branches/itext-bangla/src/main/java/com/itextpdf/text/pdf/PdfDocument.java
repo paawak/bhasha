@@ -1,5 +1,5 @@
 /*
- * $Id: PdfDocument.java 5646 2013-01-03 09:07:40Z achingarev $
+ * $Id: PdfDocument.java 5655 2013-01-13 10:58:05Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -1468,7 +1468,7 @@ public class PdfDocument extends Document {
                             subtract += hangingCorrection;
                         PdfAnnotation annot = null;
                         if (chunk.isImage()) {
-                            annot = new PdfAnnotation(writer, xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImage().getScaledHeight() + chunk.getImageOffsetY(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
+                            annot = new PdfAnnotation(writer, xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImageHeight() + chunk.getImageOffsetY(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
                         }
                         else {
                         	annot = new PdfAnnotation(writer, xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
@@ -1562,11 +1562,11 @@ public class PdfDocument extends Document {
 					}
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
-                        float matrix[] = image.matrix();
+                        float matrix[] = image.matrix(chunk.getImageScalePercentage());
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
                         graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
-                        text.moveText(xMarker + lastBaseFactor + image.getScaledWidth() - text.getXTLM(), 0);
+                        text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
                 }
                 if (!chunk.isTabSpace())

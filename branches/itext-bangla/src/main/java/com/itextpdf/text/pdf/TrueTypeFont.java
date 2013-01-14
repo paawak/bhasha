@@ -684,8 +684,6 @@ class TrueTypeFont extends BaseFont {
                         int glyphCode = cmap31.get(charCode)[0];
                         glyphToCharacterMap.put(glyphCode, c);
                     }
-                    
-                   
                 
                     GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     

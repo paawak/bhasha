@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ import java.util.TreeSet;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.pdf.languages.BanglaGlyphRepositioner;
 import com.itextpdf.text.pdf.languages.IndicCompositeCharacterComparator;
 
 /**
@@ -333,7 +335,9 @@ class FontDetails {
             }
         }
         
-        return glyphList;
+        //FIXME:: do not hard-code the repositioner here
+        return new BanglaGlyphRepositioner(Collections.unmodifiableMap(ttu.cmap31))
+        	.repositionGlyphs(glyphList.toArray(new Glyph[0]));  
         
     }
     

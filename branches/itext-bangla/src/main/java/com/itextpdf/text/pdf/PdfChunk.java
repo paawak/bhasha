@@ -1,5 +1,5 @@
 /*
- * $Id: PdfChunk.java 5576 2012-11-29 09:23:21Z achingarev $
+ * $Id: PdfChunk.java 5655 2013-01-13 10:58:05Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -132,6 +132,7 @@ public class PdfChunk {
 
 /** The image in this <CODE>PdfChunk</CODE>, if it has one */
     protected Image image;
+    protected float imageScalePercentage = 1.0f;
 
 /** The offset in the x direction for the image */
     protected float offsetX;
@@ -445,8 +446,9 @@ public class PdfChunk {
             if (image.getScaledWidth() > width) {
             	// Image does not fit the line, resize if requested
             	if (image.isScaleToFitLineWhenOverflow()) {
-            		float scalePercent = width / image.getWidth() * 100;
-            		image.scalePercent(scalePercent);
+            		//float scalePercent = width / image.getWidth() * 100;
+            		//image.scalePercent(scalePercent);
+            		this.setImageScalePercentage(width / image.getWidth());
             		return null;
             	}
                 PdfChunk pc = new PdfChunk("", this);
@@ -739,6 +741,30 @@ public class PdfChunk {
     Image getImage()
     {
         return image;
+    }
+    
+    float getImageHeight() {
+    	return image.getScaledHeight() * imageScalePercentage;
+    }
+    
+    float getImageWidth() {
+    	return image.getScaledWidth() * imageScalePercentage;
+    }
+    
+    /**
+     * Returns a scalePercentage in case the image needs to be scaled.
+     * @return the imageScalePercentage
+     */
+    public float getImageScalePercentage() {
+    	return imageScalePercentage;
+    }
+
+    /**
+     * Sets a scale percentage in case the image needs to be scaled.
+     * @param imageScalePercentage the imageScalePercentage to set
+     */
+    public void setImageScalePercentage(float imageScalePercentage) {
+    	this.imageScalePercentage = imageScalePercentage;
     }
 
 /**

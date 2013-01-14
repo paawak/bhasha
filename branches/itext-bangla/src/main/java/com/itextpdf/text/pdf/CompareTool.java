@@ -1,5 +1,5 @@
 /*
- * $Id: CompareTool.java 5571 2012-11-27 14:35:55Z eugenemark $
+ * $Id: CompareTool.java 5656 2013-01-14 10:12:22Z dkoleda $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -216,7 +216,7 @@ public class CompareTool {
         cmpPdfName = new File(cmpPdf).getName();
         cmpPdfName.substring(0, cmpPdfName.indexOf('.'));
         outImage = outPdfName + "-%03d.png";
-        cmpImage = "cmp_" + outPdfName + "-%03d.png";
+        cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
     }
 
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
@@ -238,6 +238,7 @@ public class CompareTool {
     }
 
     class PngFileFilter implements FileFilter {
+
         public boolean accept(File pathname) {
             String ap = pathname.getAbsolutePath();
             boolean b1 = ap.endsWith(".png");
