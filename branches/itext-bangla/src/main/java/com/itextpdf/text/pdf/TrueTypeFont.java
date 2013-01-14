@@ -790,8 +790,8 @@ class TrueTypeFont extends BaseFont {
         GlyphWidths = new int[hhea.numberOfHMetrics];
         for (int k = 0; k < hhea.numberOfHMetrics; ++k) {
             GlyphWidths[k] = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
-            int leftSideBearing = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
-//            System.out.println("GlyphCode=" + k + ", width=" + GlyphWidths[k] + ", leftSideBearing=" + leftSideBearing); 
+            int leftSideBearing = rf.readShort() * 1000 / head.unitsPerEm;
+            System.out.println("GlyphCode=" + k + ", width=" + GlyphWidths[k] + ", leftSideBearing=" + leftSideBearing); 
         }
     }
 

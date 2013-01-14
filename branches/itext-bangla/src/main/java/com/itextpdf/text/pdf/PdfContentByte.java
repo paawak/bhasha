@@ -1669,6 +1669,14 @@ public class PdfContentByte {
 		for (int i = 0; i < glyphs.size(); i++) {
 			Glyph glyph = glyphs.get(i);
 			escapeString(FontDetails.convertGlyphToBytes(glyph), content);
+			if (i + 1 < glyphs.size()) {
+				Glyph nextGlyph = glyphs.get(i + 1);
+				//FIXME: a horrible hack as a POC that inidividual character displacement can be handled
+				if (nextGlyph.chars.equals("\u09CC")) {//Bangla ou-kaar
+					//displacement
+					content.append(850);
+				}
+			}
 		}
 	}
 
