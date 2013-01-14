@@ -10,6 +10,6 @@ import com.itextpdf.text.pdf.Glyph;
  */
 public interface GlyphRepositioner {
 	
-	List<Glyph> repositionGlyphs(Glyph[] glyphList);
+	void repositionGlyphs(List<Glyph> glyphList);
 	
 }

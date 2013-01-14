@@ -1,6 +1,5 @@
 package com.itextpdf.text.pdf.languages;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.pdf.Glyph;
@@ -11,35 +10,29 @@ import com.itextpdf.text.pdf.Glyph;
  */
 abstract class IndicGlyphRepositioner implements GlyphRepositioner {
 
-	public List<Glyph> repositionGlyphs(Glyph[] glyphList) {
+	public void repositionGlyphs(List<Glyph> glyphList) {
 
-		List<Glyph> repositionedGlyphs = new ArrayList<Glyph>(glyphList.length);
-
-		for (int i = 0; i < glyphList.length; i++) {
-			Glyph glyph = glyphList[i];
+		for (int i = 0; i < glyphList.size(); i++) {
+			Glyph glyph = glyphList.get(i);
 			Glyph nextGlyph = getNextGlyph(glyphList, i);
 
 			if ((nextGlyph != null)
 					&& getCharactersToBeShiftedLeftByOnePosition().contains(
 							nextGlyph.chars)) {
-				repositionedGlyphs.add(nextGlyph);
-				repositionedGlyphs.add(glyph);
+				glyphList.set(i, nextGlyph);
+				glyphList.set(i + 1, glyph);
 				i++;
 				continue;
-			} else {
-				repositionedGlyphs.add(glyph);
 			}
 		}
-
-		return repositionedGlyphs;
 
 	}
 
 	abstract List<String> getCharactersToBeShiftedLeftByOnePosition();
 
-	private Glyph getNextGlyph(Glyph[] glyphs, int currentIndex) {
-		if (currentIndex + 1 < glyphs.length) {
-			return glyphs[currentIndex + 1];
+	private Glyph getNextGlyph(List<Glyph> glyphs, int currentIndex) {
+		if (currentIndex + 1 < glyphs.size()) {
+			return glyphs.get(currentIndex + 1);
 		} else {
 			return null;
 		}

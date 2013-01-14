@@ -336,9 +336,10 @@ class FontDetails {
         }
         
         //FIXME:: do not hard-code the repositioner here
-        return new BanglaGlyphRepositioner(Collections.unmodifiableMap(ttu.cmap31))
-        	.repositionGlyphs(glyphList.toArray(new Glyph[0]));  
+        new BanglaGlyphRepositioner(Collections.unmodifiableMap(ttu.cmap31), glyphSubstitutionMap)
+        	.repositionGlyphs(glyphList);  
         
+        return glyphList;
     }
     
     static byte[] convertGlyphToBytes(Glyph glyph) { 
@@ -351,6 +352,20 @@ class FontDetails {
 		}
     }
     
+//    static byte[] convertGlyphToBytes(List<Glyph> glyphs) { 
+//    	try {
+//    		char[] charArray = new char[glyphs.size()];
+//    		int i = 0;
+//    		
+//    		for (Glyph glyph : glyphs) {
+//    			charArray[i++] = (char) glyph.code;
+//    		}
+//    		
+//			return new String(charArray).getBytes(CJKFont.CJK_ENCODING);
+//		} catch (UnsupportedEncodingException e) {
+//			 throw new ExceptionConverter(e);
+//		}
+//    }
 
     /**
      * Writes the font definition to the document.
