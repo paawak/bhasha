@@ -1674,7 +1674,7 @@ public class PdfContentByte {
 				//FIXME: a horrible hack as a POC that inidividual character displacement can be handled
 				if (nextGlyph.chars.equals("\u09CC")) {//Bangla ou-kaar
 					//displacement
-					content.append(850);
+					content.append((glyph.width + nextGlyph.width + 100) / 2);
 				}
 			}
 		}

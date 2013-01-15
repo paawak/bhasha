@@ -1,5 +1,5 @@
 /*
- * $Id: PdfDocument.java 5655 2013-01-13 10:58:05Z blowagie $
+ * $Id: PdfDocument.java 5658 2013-01-15 15:05:42Z pavel-alay $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -1164,6 +1164,8 @@ public class PdfDocument extends Document {
             	line = null;
             	newPage();
             	line = overflowLine;
+                //update left indent because of mirror margins.
+                overflowLine.left = indentLeft();
             }
             currentHeight += line.height();
             lines.add(line);

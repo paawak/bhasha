@@ -13,7 +13,7 @@ import com.itextpdf.text.pdf.Glyph;
 public class BanglaGlyphRepositioner extends IndicGlyphRepositioner {
 	
 	private static final String[] CHARCTERS_TO_BE_SHIFTED_LEFT_BY_1 = new String[] {
-			"\u09BF", "\u09C7", "\u09C8" };
+			"\u09BF", "\u09C7", "\u09C8"};
 	
 	private final Map<Integer, int[]> cmap31;
 	private final Map<String, Glyph> glyphSubstitutionMap;
@@ -33,14 +33,14 @@ public class BanglaGlyphRepositioner extends IndicGlyphRepositioner {
 			
 			if (glyph.chars.equals("\u09CB")) {
 				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09BE');
-			} /*else if (glyph.chars.equals("\u09CC")) {//FIXME: this does not work
+			} /*else if (glyph.chars.equals("\u09CC")) {
 				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09D7');
 			}*/
 		}
 	}
 
 	@Override
-	List<String> getCharactersToBeShiftedLeftByOnePosition() {
+	public List<String> getCharactersToBeShiftedLeftByOnePosition() {
 		return Arrays.asList(CHARCTERS_TO_BE_SHIFTED_LEFT_BY_1);
 	}
 	
