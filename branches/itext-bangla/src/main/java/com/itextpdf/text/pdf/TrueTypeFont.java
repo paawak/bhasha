@@ -1,5 +1,5 @@
 /*
- * $Id: TrueTypeFont.java 5651 2013-01-10 21:56:52Z psoares33 $
+ * $Id: TrueTypeFont.java 5659 2013-01-16 15:21:58Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -1227,6 +1227,11 @@ class TrueTypeFont extends BaseFont {
         }
     }
 
+    synchronized protected byte[] getSubSet(HashSet glyphs, boolean subsetp) throws IOException, DocumentException {
+        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), glyphs, directoryOffset, true, !subsetp);
+        return sb.process();
+    }
+
     protected static int[] compactRanges(ArrayList<int[]> ranges) {
         ArrayList<int[]> simp = new ArrayList<int[]>();
         for (int k = 0; k < ranges.size(); ++k) {
@@ -1373,8 +1378,7 @@ class TrueTypeFont extends BaseFont {
                 addRangeUni(glyphs, subsetp);
                 byte[] b = null;
                 if (subsetp || directoryOffset != 0 || subsetRanges != null) {
-                    TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), glyphs, directoryOffset, true, !subsetp);
-                    b = sb.process();
+                    b = getSubSet(glyphs, subsetp);
                 }
                 else {
                     b = getFullFont();
