@@ -33,9 +33,9 @@ public class BanglaGlyphRepositioner extends IndicGlyphRepositioner {
 			
 			if (glyph.chars.equals("\u09CB")) {
 				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09BE');
-			} /*else if (glyph.chars.equals("\u09CC")) {
+			} else if (glyph.chars.equals("\u09CC")) {
 				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09D7');
-			}*/
+			}
 		}
 	}
 

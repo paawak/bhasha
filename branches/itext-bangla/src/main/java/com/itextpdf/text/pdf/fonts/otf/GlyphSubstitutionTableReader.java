@@ -51,8 +51,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.Glyph;
 
 /**
@@ -67,8 +65,6 @@ import com.itextpdf.text.pdf.Glyph;
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GlyphSubstitutionTableReader.class);
 
     private final int[] glyphWidthByIndex;
     private final Map<Integer, Character> glyphToCharacterMap;

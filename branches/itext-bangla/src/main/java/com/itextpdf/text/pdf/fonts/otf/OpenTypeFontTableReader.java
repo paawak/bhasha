@@ -46,136 +46,262 @@ package com.itextpdf.text.pdf.fonts.otf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
- *  
+ * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public abstract class OpenTypeFontTableReader {
-    
-    protected final RandomAccessFileOrArray rf;
-    protected final int tableLocation;
-    
-    public OpenTypeFontTableReader(String fontFilePath, int tableLocation) throws IOException { 
-        this.rf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fontFilePath));
-        this.tableLocation = tableLocation;
-    }
-    
-    /**
-     * This is the starting point of the class. A sub-class must call this method to start getting call backs
-     * to the {@link #readSubTable(int, int)} method.
-     */
-    protected final void readLookupListTable() throws IOException {
-        int lookupListTableLocation = tableLocation + readHeader().lookupListOffset;
-        
-        rf.seek(lookupListTableLocation);
-        int lookupCount = rf.readShort();
-//        System.out.println("lookupCount=" + lookupCount);
 
-        List<Integer> lookupTableOffsets = new ArrayList<Integer>();
+	protected static final Logger LOG = LoggerFactory
+			.getLogger(OpenTypeFontTableReader.class);
 
-        for (int i = 0; i < lookupCount; i++) {
-            int lookupTableOffset = rf.readShort();
-            lookupTableOffsets.add(lookupTableOffset);
-        }
-        
-        for (int lookupTableOffset : lookupTableOffsets) {
-            readLookupTable(lookupListTableLocation + lookupTableOffset);
-        }
-    }
-    
-    protected abstract void readSubTable(int lookupType, int subTableLocation) throws IOException;
-    
-    private void readLookupTable(int lookupTableLocation) throws IOException {
-        rf.seek(lookupTableLocation);
-        int lookupType = rf.readShort();
-//        System.out.println("lookupType=" + lookupType);
-        
-        // skip 2 bytes for the field `lookupFlag`
-        rf.skipBytes(2);
+	protected final RandomAccessFileOrArray rf;
+	protected final int tableLocation;
 
-        int subTableCount = rf.readShort();
-//        System.out.println("subTableCount=" + subTableCount);
+	public OpenTypeFontTableReader(String fontFilePath, int tableLocation)
+			throws IOException {
+		this.rf = new RandomAccessFileOrArray(
+				new RandomAccessSourceFactory().createBestSource(fontFilePath));
+		this.tableLocation = tableLocation;
+	}
 
-        List<Integer> subTableOffsets = new ArrayList<Integer>();
+	/**
+	 * This is the starting point of the class. A sub-class must call this
+	 * method to start getting call backs to the {@link #readSubTable(int, int)}
+	 * method.
+	 */
+	protected final void readLookupListTable() throws IOException {
+		
+		TableHeader header = readHeader();
+		
+		int lookupListTableLocation = tableLocation
+				+ header.lookupListOffset;
 
-        for (int i = 0; i < subTableCount; i++) {
-            int subTableOffset = rf.readShort();
-            subTableOffsets.add(subTableOffset);
-        }
+		rf.seek(lookupListTableLocation);
+		int lookupCount = rf.readShort();
+		// System.out.println("lookupCount=" + lookupCount);
 
-        for (int subTableOffset : subTableOffsets) {
-//            System.out.println("subTableOffset=" + subTableOffset);
-            readSubTable(lookupType, lookupTableLocation + subTableOffset);
-        }
-    }
-    
-    protected final List<Integer> readCoverageFormat(int coverageLocation) throws IOException {
-        rf.seek(coverageLocation);
-        int coverageFormat = rf.readShort();
+		List<Integer> lookupTableOffsets = new ArrayList<Integer>();
 
-        List<Integer> glyphIds;
+		for (int i = 0; i < lookupCount; i++) {
+			int lookupTableOffset = rf.readShort();
+			lookupTableOffsets.add(lookupTableOffset);
+		}
 
-        if (coverageFormat == 1) {
-            int glyphCount = rf.readShort();
+		// read the Script tables
+		Map<String, Integer> scriptRecords = readScriptListTable(tableLocation
+				+ header.scriptListOffset);
 
-            glyphIds = new ArrayList<Integer>(glyphCount);
+		for (String scriptName : scriptRecords.keySet()) {
+			readScriptTable(scriptRecords.get(scriptName));
+		}
+		
+		// read FeatureTable
+		readFeatureListTable(tableLocation
+				+ header.featureListOffset);
 
-            for (int i = 0; i < glyphCount; i++) {
-                int coverageGlyphId = rf.readShort();
-                glyphIds.add(coverageGlyphId);
-            }
+		// read LookUp tables
+		for (int lookupTableOffset : lookupTableOffsets) {
+			readLookupTable(lookupListTableLocation + lookupTableOffset);
+		}
+	}
 
-        } else if (coverageFormat == 2) {
+	protected abstract void readSubTable(int lookupType, int subTableLocation)
+			throws IOException;
 
-            int rangeCount = rf.readShort();
+	private void readLookupTable(int lookupTableLocation) throws IOException {
+		rf.seek(lookupTableLocation);
+		int lookupType = rf.readShort();
+		// System.out.println("lookupType=" + lookupType);
 
-            glyphIds = new ArrayList<Integer>();
+		// skip 2 bytes for the field `lookupFlag`
+		rf.skipBytes(2);
 
-            for (int i = 0; i < rangeCount; i++) {
-                readRangeRecord(glyphIds);
-            }
+		int subTableCount = rf.readShort();
+		// System.out.println("subTableCount=" + subTableCount);
 
-        } else {
-            throw new UnsupportedOperationException("Invalid coverage format: " + coverageFormat);
-        }
+		List<Integer> subTableOffsets = new ArrayList<Integer>();
 
-        return Collections.unmodifiableList(glyphIds);
-    }
+		for (int i = 0; i < subTableCount; i++) {
+			int subTableOffset = rf.readShort();
+			subTableOffsets.add(subTableOffset);
+		}
 
-    private void readRangeRecord(List<Integer> glyphIds) throws IOException {
-        int startGlyphId = rf.readShort();
-        int endGlyphId = rf.readShort();
-        //skip the `startCoverageIndex` field
-        rf.skipBytes(2);
+		for (int subTableOffset : subTableOffsets) {
+			// System.out.println("subTableOffset=" + subTableOffset);
+			readSubTable(lookupType, lookupTableLocation + subTableOffset);
+		}
+	}
 
-        for (int glyphId = startGlyphId; glyphId <= endGlyphId; glyphId++) {
-            glyphIds.add(glyphId);
-        }
+	protected final List<Integer> readCoverageFormat(int coverageLocation)
+			throws IOException {
+		rf.seek(coverageLocation);
+		int coverageFormat = rf.readShort();
 
-    }
-    
-    private TableHeader readHeader() throws IOException {
-        rf.seek(tableLocation);
-        // 32 bit signed
-        int version = rf.readInt();
-        // 16 bit unsigned
-        int scriptListOffset = rf.readUnsignedShort();
-        int featureListOffset = rf.readUnsignedShort();
-        int lookupListOffset = rf.readUnsignedShort();
+		List<Integer> glyphIds;
 
-//        System.out.println("version=" + version);
-//        System.out.println("scriptListOffset=" + scriptListOffset);
-//        System.out.println("featureListOffset=" + featureListOffset);
-//        System.out.println("lookupListOffset=" + lookupListOffset);
-        
-        TableHeader header = new TableHeader(version, scriptListOffset, featureListOffset, lookupListOffset);
-        
-        return header;
-    }
+		if (coverageFormat == 1) {
+			int glyphCount = rf.readShort();
+
+			glyphIds = new ArrayList<Integer>(glyphCount);
+
+			for (int i = 0; i < glyphCount; i++) {
+				int coverageGlyphId = rf.readShort();
+				glyphIds.add(coverageGlyphId);
+			}
+
+		} else if (coverageFormat == 2) {
+
+			int rangeCount = rf.readShort();
+
+			glyphIds = new ArrayList<Integer>();
+
+			for (int i = 0; i < rangeCount; i++) {
+				readRangeRecord(glyphIds);
+			}
+
+		} else {
+			throw new UnsupportedOperationException("Invalid coverage format: "
+					+ coverageFormat);
+		}
+
+		return Collections.unmodifiableList(glyphIds);
+	}
+
+	private void readRangeRecord(List<Integer> glyphIds) throws IOException {
+		int startGlyphId = rf.readShort();
+		int endGlyphId = rf.readShort();
+		// skip the `startCoverageIndex` field
+		rf.skipBytes(2);
+
+		for (int glyphId = startGlyphId; glyphId <= endGlyphId; glyphId++) {
+			glyphIds.add(glyphId);
+		}
+
+	}
+
+	private Map<String, Integer> readScriptListTable(
+			final int scriptListTableLocationOffset) throws IOException {
+		rf.seek(scriptListTableLocationOffset);
+		// Number of ScriptRecords
+		int scriptCount = rf.readShort();
+
+		Map<String, Integer> scriptRecords = new HashMap<String, Integer>(
+				scriptCount);
+
+		System.out.println("scriptCount=" + scriptCount);
+
+		for (int scriptRecord = 1; scriptRecord <= scriptCount; scriptRecord++) {
+			readScriptRecord(scriptListTableLocationOffset, scriptRecords);
+		}
+
+		return scriptRecords;
+
+	}
+
+	private void readScriptRecord(final int scriptListTableLocationOffset,
+			Map<String, Integer> scriptRecords) throws IOException {
+		String scriptTag = rf.readString(4, "utf-8");
+		System.out.println("scriptTag=" + scriptTag);
+
+		int scriptOffset = rf.readShort();
+//		System.out.println("scriptOffset=" + scriptOffset);
+
+		scriptRecords.put(scriptTag, scriptListTableLocationOffset
+				+ scriptOffset);
+
+	}
+
+	private void readScriptTable(final int scriptTableLocationOffset)
+			throws IOException {
+		rf.seek(scriptTableLocationOffset);
+		int defaultLangSys = rf.readShort();
+		int langSysCount = rf.readShort();
+		
+		if (langSysCount > 0) {
+			Map<String, Integer> langSysRecords = new LinkedHashMap<String, Integer>(langSysCount);
+			
+			for (int i = 0; i < langSysCount; i++) {
+				readLangSysRecord(langSysRecords);
+			}
+			
+			// read LangSys tables
+			for (String langSysTag : langSysRecords.keySet()) {
+				readLangSysTable(scriptTableLocationOffset + langSysRecords.get(langSysTag)); 
+			}
+		}
+		
+		// read default LangSys table
+		readLangSysTable(scriptTableLocationOffset + defaultLangSys);
+	}
+
+	private void readLangSysRecord(Map<String, Integer> langSysRecords) throws IOException {
+		String langSysTag = rf.readString(4, "utf-8");
+		int langSys = rf.readShort();
+		langSysRecords.put(langSysTag, langSys);
+	}
+	
+	private void readLangSysTable(final int langSysTableLocationOffset)
+			throws IOException {
+		rf.seek(langSysTableLocationOffset);
+		int lookupOrderOffset = rf.readShort();
+		System.out.println("lookupOrderOffset=" + lookupOrderOffset);
+		int reqFeatureIndex = rf.readShort();
+		System.out.println("reqFeatureIndex=" + reqFeatureIndex);
+		int featureCount = rf.readShort();
+		
+		List<Short> featureListIndices = new ArrayList<Short>(featureCount);
+		for (int i = 0; i < featureCount; i++) {
+			featureListIndices.add(rf.readShort());
+		}
+		
+		System.out.println("featureListIndices=" + featureListIndices);
+		
+	}
+	
+	private void readFeatureListTable(final int featureListTableLocationOffset)
+			throws IOException {
+		rf.seek(featureListTableLocationOffset);
+		int featureCount = rf.readShort();
+		System.out.println("featureCount=" + featureCount);
+		
+		Map<String, Short> featureRecords = new LinkedHashMap<String, Short>(featureCount);
+		for (int i = 0; i < featureCount; i++) {
+			featureRecords.put(rf.readString(4, "utf-8"), rf.readShort());
+		}
+		
+		System.out.println("featureRecords=" + featureRecords);
+		
+	}
+
+	private TableHeader readHeader() throws IOException {
+		rf.seek(tableLocation);
+		// 32 bit signed
+		int version = rf.readInt();
+		// 16 bit unsigned
+		int scriptListOffset = rf.readUnsignedShort();
+		int featureListOffset = rf.readUnsignedShort();
+		int lookupListOffset = rf.readUnsignedShort();
+
+		// System.out.println("version=" + version);
+		// System.out.println("scriptListOffset=" + scriptListOffset);
+		// System.out.println("featureListOffset=" + featureListOffset);
+		// System.out.println("lookupListOffset=" + lookupListOffset);
+
+		TableHeader header = new TableHeader(version, scriptListOffset,
+				featureListOffset, lookupListOffset);
+
+		return header;
+	}
 
 }

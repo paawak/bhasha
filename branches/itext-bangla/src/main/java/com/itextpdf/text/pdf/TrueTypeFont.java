@@ -655,6 +655,7 @@ class TrueTypeFont extends BaseFont {
             rf.skipBytes(6);
             for (int k = 0; k < num_tables; ++k) {
                 String tag = readStandardString(4);
+//                System.out.println(tag); 
                 rf.skipBytes(4);
                 int table_location[] = new int[2];
                 table_location[0] = rf.readInt();
@@ -750,14 +751,7 @@ class TrueTypeFont extends BaseFont {
      * @throws IOException the font file could not be read
      */
     protected String readStandardString(int length) throws IOException {
-        byte buf[] = new byte[length];
-        rf.readFully(buf);
-        try {
-            return new String(buf, WINANSI);
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
+        return rf.readString(length, WINANSI);
     }
 
     /** Reads a Unicode <CODE>String</CODE> from the font file. Each character is
@@ -791,7 +785,7 @@ class TrueTypeFont extends BaseFont {
         for (int k = 0; k < hhea.numberOfHMetrics; ++k) {
             GlyphWidths[k] = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
             int leftSideBearing = rf.readShort() * 1000 / head.unitsPerEm;
-            System.out.println("GlyphCode=" + k + ", width=" + GlyphWidths[k] + ", leftSideBearing=" + leftSideBearing); 
+//            System.out.println("GlyphCode=" + k + ", width=" + GlyphWidths[k] + ", leftSideBearing=" + leftSideBearing); 
         }
     }
 
