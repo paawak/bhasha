@@ -60,7 +60,7 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     }
     
     public void read() throws IOException { 
-        readLookupListTable();
+        startReadingTable();
     }
     
     @Override

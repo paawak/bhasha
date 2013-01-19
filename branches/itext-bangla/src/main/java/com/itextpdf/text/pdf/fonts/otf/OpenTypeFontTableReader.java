@@ -80,16 +80,26 @@ public abstract class OpenTypeFontTableReader {
 	 * method to start getting call backs to the {@link #readSubTable(int, int)}
 	 * method.
 	 */
-	protected final void readLookupListTable() throws IOException {
-		
+	protected final void startReadingTable() throws IOException {
 		TableHeader header = readHeader();
-		
-		int lookupListTableLocation = tableLocation
-				+ header.lookupListOffset;
 
+		// read the Script tables
+		readScriptListTable(tableLocation + header.scriptListOffset);
+
+		// read Feature table
+		readFeatureListTable(tableLocation + header.featureListOffset);
+
+		// read LookUpList table
+		readLookupListTable(tableLocation + header.lookupListOffset);
+	}
+
+	protected abstract void readSubTable(int lookupType, int subTableLocation)
+			throws IOException;
+
+	private void readLookupListTable(int lookupListTableLocation)
+			throws IOException {
 		rf.seek(lookupListTableLocation);
 		int lookupCount = rf.readShort();
-		// System.out.println("lookupCount=" + lookupCount);
 
 		List<Integer> lookupTableOffsets = new ArrayList<Integer>();
 
@@ -97,27 +107,14 @@ public abstract class OpenTypeFontTableReader {
 			int lookupTableOffset = rf.readShort();
 			lookupTableOffsets.add(lookupTableOffset);
 		}
-
-		// read the Script tables
-		Map<String, Integer> scriptRecords = readScriptListTable(tableLocation
-				+ header.scriptListOffset);
-
-		for (String scriptName : scriptRecords.keySet()) {
-			readScriptTable(scriptRecords.get(scriptName));
-		}
 		
-		// read FeatureTable
-		readFeatureListTable(tableLocation
-				+ header.featureListOffset);
+		System.out.println("#############lookupTableOffsets=" + lookupTableOffsets);
 
 		// read LookUp tables
 		for (int lookupTableOffset : lookupTableOffsets) {
 			readLookupTable(lookupListTableLocation + lookupTableOffset);
 		}
 	}
-
-	protected abstract void readSubTable(int lookupType, int subTableLocation)
-			throws IOException;
 
 	private void readLookupTable(int lookupTableLocation) throws IOException {
 		rf.seek(lookupTableLocation);
@@ -190,8 +187,8 @@ public abstract class OpenTypeFontTableReader {
 
 	}
 
-	private Map<String, Integer> readScriptListTable(
-			final int scriptListTableLocationOffset) throws IOException {
+	private void readScriptListTable(int scriptListTableLocationOffset)
+			throws IOException {
 		rf.seek(scriptListTableLocationOffset);
 		// Number of ScriptRecords
 		int scriptCount = rf.readShort();
@@ -201,12 +198,13 @@ public abstract class OpenTypeFontTableReader {
 
 		System.out.println("scriptCount=" + scriptCount);
 
-		for (int scriptRecord = 1; scriptRecord <= scriptCount; scriptRecord++) {
+		for (int i = 0; i < scriptCount; i++) {
 			readScriptRecord(scriptListTableLocationOffset, scriptRecords);
 		}
 
-		return scriptRecords;
-
+		for (String scriptName : scriptRecords.keySet()) {
+			readScriptTable(scriptRecords.get(scriptName));
+		}
 	}
 
 	private void readScriptRecord(final int scriptListTableLocationOffset,
@@ -215,7 +213,7 @@ public abstract class OpenTypeFontTableReader {
 		System.out.println("scriptTag=" + scriptTag);
 
 		int scriptOffset = rf.readShort();
-//		System.out.println("scriptOffset=" + scriptOffset);
+		// System.out.println("scriptOffset=" + scriptOffset);
 
 		scriptRecords.put(scriptTag, scriptListTableLocationOffset
 				+ scriptOffset);
@@ -227,30 +225,33 @@ public abstract class OpenTypeFontTableReader {
 		rf.seek(scriptTableLocationOffset);
 		int defaultLangSys = rf.readShort();
 		int langSysCount = rf.readShort();
-		
+
 		if (langSysCount > 0) {
-			Map<String, Integer> langSysRecords = new LinkedHashMap<String, Integer>(langSysCount);
-			
+			Map<String, Integer> langSysRecords = new LinkedHashMap<String, Integer>(
+					langSysCount);
+
 			for (int i = 0; i < langSysCount; i++) {
 				readLangSysRecord(langSysRecords);
 			}
-			
+
 			// read LangSys tables
 			for (String langSysTag : langSysRecords.keySet()) {
-				readLangSysTable(scriptTableLocationOffset + langSysRecords.get(langSysTag)); 
+				readLangSysTable(scriptTableLocationOffset
+						+ langSysRecords.get(langSysTag));
 			}
 		}
-		
+
 		// read default LangSys table
 		readLangSysTable(scriptTableLocationOffset + defaultLangSys);
 	}
 
-	private void readLangSysRecord(Map<String, Integer> langSysRecords) throws IOException {
+	private void readLangSysRecord(Map<String, Integer> langSysRecords)
+			throws IOException {
 		String langSysTag = rf.readString(4, "utf-8");
 		int langSys = rf.readShort();
 		langSysRecords.put(langSysTag, langSys);
 	}
-	
+
 	private void readLangSysTable(final int langSysTableLocationOffset)
 			throws IOException {
 		rf.seek(langSysTableLocationOffset);
@@ -259,29 +260,52 @@ public abstract class OpenTypeFontTableReader {
 		int reqFeatureIndex = rf.readShort();
 		System.out.println("reqFeatureIndex=" + reqFeatureIndex);
 		int featureCount = rf.readShort();
-		
+
 		List<Short> featureListIndices = new ArrayList<Short>(featureCount);
 		for (int i = 0; i < featureCount; i++) {
 			featureListIndices.add(rf.readShort());
 		}
-		
+
 		System.out.println("featureListIndices=" + featureListIndices);
-		
+
 	}
-	
+
 	private void readFeatureListTable(final int featureListTableLocationOffset)
 			throws IOException {
 		rf.seek(featureListTableLocationOffset);
 		int featureCount = rf.readShort();
 		System.out.println("featureCount=" + featureCount);
-		
-		Map<String, Short> featureRecords = new LinkedHashMap<String, Short>(featureCount);
+
+		Map<String, Short> featureRecords = new LinkedHashMap<String, Short>(
+				featureCount);
 		for (int i = 0; i < featureCount; i++) {
 			featureRecords.put(rf.readString(4, "utf-8"), rf.readShort());
 		}
-		
-		System.out.println("featureRecords=" + featureRecords);
-		
+
+		for (String featureName : featureRecords.keySet()) {
+			System.out.println("*************featureName=" + featureName);
+			readFeatureTable(featureListTableLocationOffset
+					+ featureRecords.get(featureName));
+		}
+
+	}
+
+	private void readFeatureTable(final int featureTableLocationOffset)
+			throws IOException {
+		rf.seek(featureTableLocationOffset);
+		int featureParamsOffset = rf.readShort();
+		System.out.println("featureParamsOffset=" + featureParamsOffset);
+
+		int lookupCount = rf.readShort();
+		System.out.println("lookupCount=" + lookupCount);
+
+		List<Short> lookupListIndices = new ArrayList<Short>(lookupCount);
+		for (int i = 0; i < lookupCount; i++) {
+			lookupListIndices.add(rf.readShort());
+		}
+
+		System.out.println("lookupListIndices=" + lookupListIndices);
+
 	}
 
 	private TableHeader readHeader() throws IOException {

@@ -81,7 +81,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
         rawLigatureSubstitutionMap = new LinkedHashMap<Integer, List<Integer>>();
         
         try {
-            readLookupListTable();
+            startReadingTable();
         } catch (IOException e) {
             throw new FontReadingException("Could not read lookupListTable", e);
         }
