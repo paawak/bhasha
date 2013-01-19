@@ -82,6 +82,7 @@ public class LoggerFactory {
 	}
 
 	private Logger logger = new NoOpLogger();
+//	private Logger logger = new SysoLogger();
 
 	private LoggerFactory() {
 	}

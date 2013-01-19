@@ -108,10 +108,10 @@ public abstract class OpenTypeFontTableReader {
 			lookupTableOffsets.add(lookupTableOffset);
 		}
 		
-		System.out.println("#############lookupTableOffsets=" + lookupTableOffsets);
-
 		// read LookUp tables
-		for (int lookupTableOffset : lookupTableOffsets) {
+		for (int i = 0; i < lookupCount; i++) {
+			System.out.println("#############lookupIndex=" + i);
+			int lookupTableOffset = lookupTableOffsets.get(i);
 			readLookupTable(lookupListTableLocation + lookupTableOffset);
 		}
 	}
