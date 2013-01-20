@@ -322,13 +322,6 @@ class FontDetails {
             charEncodedGlyphCodes[i] = (char) glyph.code;
             Integer glyphCode = Integer.valueOf(glyph.code);
             
-//            if (glyphCode == 101) {
-//             	System.err.println("*******************");
-//             	//get the previous entry
-//             	Glyph previousGlyph = glyphList.get(i - 1); 
-//             	longTag.get(previousGlyph.code)[1] = 0;
-//             }
-            
             if (!longTag.containsKey(glyphCode)) {
                 // FIXME: this is buggy as the 3rd arg. should be a String as a Glyph can represent more than 1 char
                 longTag.put(glyphCode, new int[]{glyph.code,  glyph.width, glyph.chars.charAt(0)}); 

@@ -189,7 +189,6 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
         LOG.debug("coverage=" + coverage);
 
         int ligSetCount = rf.readShort();
-        LOG.debug("^^^^^^^^^^^^^^^^^^^^^^^^^^^^ligSetCount=" + ligSetCount);
 
         List<Integer> ligatureOffsets = new ArrayList<Integer>(ligSetCount);
 
@@ -197,8 +196,6 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
             int ligatureOffset = rf.readShort();
             ligatureOffsets.add(ligatureOffset);
         }
-
-        LOG.debug("::::::::::::::::::::::::::::::::::");
 
         List<Integer> coverageGlyphIds = readCoverageFormat(ligatureSubstitutionSubtableLocation + coverage);
 

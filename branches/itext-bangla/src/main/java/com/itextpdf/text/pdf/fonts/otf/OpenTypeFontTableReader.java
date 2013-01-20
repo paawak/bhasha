@@ -110,10 +110,11 @@ public abstract class OpenTypeFontTableReader {
 		
 		// read LookUp tables
 		for (int i = 0; i < lookupCount; i++) {
-			System.out.println("#############lookupIndex=" + i);
+//			System.out.println("#############lookupIndex=" + i);
 			int lookupTableOffset = lookupTableOffsets.get(i);
 			readLookupTable(lookupListTableLocation + lookupTableOffset);
 		}
+		
 	}
 
 	private void readLookupTable(int lookupTableLocation) throws IOException {
@@ -178,12 +179,17 @@ public abstract class OpenTypeFontTableReader {
 	private void readRangeRecord(List<Integer> glyphIds) throws IOException {
 		int startGlyphId = rf.readShort();
 		int endGlyphId = rf.readShort();
-		// skip the `startCoverageIndex` field
-		rf.skipBytes(2);
-
+		int startCoverageIndex = rf.readShort();
+		
 		for (int glyphId = startGlyphId; glyphId <= endGlyphId; glyphId++) {
 			glyphIds.add(glyphId);
 		}
+		
+//		System.out.println("^^^^^^^^^Coverage Format 2.... " 
+//				+ "startGlyphId=" + startGlyphId
+//				+ ", endGlyphId=" + endGlyphId
+//				+ ", startCoverageIndex=" + startCoverageIndex 
+//				+ "\n, glyphIds" + glyphIds);
 
 	}
 
@@ -196,7 +202,7 @@ public abstract class OpenTypeFontTableReader {
 		Map<String, Integer> scriptRecords = new HashMap<String, Integer>(
 				scriptCount);
 
-		System.out.println("scriptCount=" + scriptCount);
+//		System.out.println("scriptCount=" + scriptCount);
 
 		for (int i = 0; i < scriptCount; i++) {
 			readScriptRecord(scriptListTableLocationOffset, scriptRecords);
@@ -304,7 +310,7 @@ public abstract class OpenTypeFontTableReader {
 			lookupListIndices.add(rf.readShort());
 		}
 
-		System.out.println("lookupListIndices=" + lookupListIndices);
+//		System.out.println("lookupListIndices=" + lookupListIndices);
 
 	}
 

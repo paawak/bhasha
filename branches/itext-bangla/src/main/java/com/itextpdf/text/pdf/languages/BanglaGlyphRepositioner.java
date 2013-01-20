@@ -13,7 +13,7 @@ import com.itextpdf.text.pdf.Glyph;
 public class BanglaGlyphRepositioner extends IndicGlyphRepositioner {
 	
 	private static final String[] CHARCTERS_TO_BE_SHIFTED_LEFT_BY_1 = new String[] {
-			"\u09BF", "\u09C7", "\u09C8"};
+			"\u09BF", "\u09C7", "\u09C8"/*, "\u09CB", "\u09CC"*/};
 	
 	private final Map<Integer, int[]> cmap31;
 	private final Map<String, Glyph> glyphSubstitutionMap;
@@ -28,15 +28,15 @@ public class BanglaGlyphRepositioner extends IndicGlyphRepositioner {
 		
 		super.repositionGlyphs(glyphList);
 		
-		for (int i = 0; i < glyphList.size(); i++) {
-			Glyph glyph = glyphList.get(i);
-			
-			if (glyph.chars.equals("\u09CB")) {
-				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09BE');
-			} else if (glyph.chars.equals("\u09CC")) {
-				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09D7');
-			}
-		}
+//		for (int i = 0; i < glyphList.size(); i++) {
+//			Glyph glyph = glyphList.get(i);
+//			
+//			if (glyph.chars.equals("\u09CB")) {
+//				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09BE');
+//			} else if (glyph.chars.equals("\u09CC")) {
+//				handleOKaarAndOUKaar(i, glyphList, '\u09C7', '\u09D7');
+//			}
+//		}
 	}
 
 	@Override
