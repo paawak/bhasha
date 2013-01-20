@@ -49,12 +49,14 @@ public class BanglaPdfGenerationTest {
 //     * \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf
 //     * 
 //     */
-//    private static final String BANGLA_TEXT = "আমি কোন পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
+    private static final String BANGLA_TEXT = "আমি কোন চৌকো চৌ পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
+//	private static final String BANGLA_TEXT = "\u0995\u09d7\u09a8";
     
-    private static final String BANGLA_TEXT = "আমি ঝরের কাছে রেখে গেলাম আমার ঠিকানা মিশরের মমি";
+//    private static final String BANGLA_TEXT = "আমি ঝরের কাছে রেখে গেলাম আমার ঠিকানা মিশরের মমি";
 
-    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
-//    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
+    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
+//    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
+//    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/VRINDA.TTF";
 //    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
 
     // private static final String BANGLA_FONT =
