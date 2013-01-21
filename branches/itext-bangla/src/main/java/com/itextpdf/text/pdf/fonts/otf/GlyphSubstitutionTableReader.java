@@ -66,26 +66,23 @@ import com.itextpdf.text.pdf.Glyph;
  */
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
-    private final int[] glyphWidthByIndex;
+    private final int[] glyphWidthsByIndex;
     private final Map<Integer, Character> glyphToCharacterMap;
     private Map<Integer, List<Integer>> rawLigatureSubstitutionMap;
 
-    public GlyphSubstitutionTableReader(String fontFilePath, int gsubTableLocation, Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthByIndex) throws IOException {
+    public GlyphSubstitutionTableReader(String fontFilePath, int gsubTableLocation, 
+    		Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthsByIndex) throws IOException {
         super(fontFilePath, gsubTableLocation);
-        this.glyphWidthByIndex = glyphWidthByIndex;
+        this.glyphWidthsByIndex = glyphWidthsByIndex;
         this.glyphToCharacterMap = glyphToCharacterMap;
     }
-
-    public Map<String, Glyph> getGlyphSubstitutionMap() throws FontReadingException {
-        
+    
+    public void read() throws FontReadingException { 
         rawLigatureSubstitutionMap = new LinkedHashMap<Integer, List<Integer>>();
-        
-        try {
-            startReadingTable();
-        } catch (IOException e) {
-            throw new FontReadingException("Could not read lookupListTable", e);
-        }
-        
+        startReadingTable();
+    }
+    
+    public Map<String, Glyph> getGlyphSubstitutionMap() throws FontReadingException {
         Map<String, Glyph> glyphSubstitutionMap = new LinkedHashMap<String, Glyph>();
         
         for (Integer glyphIdToReplace : rawLigatureSubstitutionMap.keySet()) {
@@ -96,14 +93,12 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
                 chars.append(getTextFromGlyph(constituentGlyphId, glyphToCharacterMap));
             }
             
-            Glyph glyph = new Glyph(glyphIdToReplace, glyphWidthByIndex[glyphIdToReplace], chars.toString());
+            Glyph glyph = new Glyph(glyphIdToReplace, glyphWidthsByIndex[glyphIdToReplace], chars.toString());
             
             glyphSubstitutionMap.put(glyph.chars, glyph);
-//            System.err.println("++++++glyphIdToReplace=" + glyphIdToReplace + "=>" + glyph.chars); 
         }
         
         return Collections.unmodifiableMap(glyphSubstitutionMap);
-         
     }
     
     private String getTextFromGlyph(int glyphId, Map<Integer, Character> glyphToCharacterMap) throws FontReadingException {
@@ -167,7 +162,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
                 rawLigatureSubstitutionMap.put(substituteGlyphId, Arrays.asList(coverageGlyphId)); 
             }
         } else if (substFormat == 2) {
-            System.err.println("substFormat 2 is not yet handled by " + GlyphSubstitutionTableReader.class.getSimpleName());
+            System.err.println("LookupType 1 :: substFormat 2 is not yet handled by " + GlyphSubstitutionTableReader.class.getSimpleName());
         } else {
             throw new IllegalArgumentException("Bad substFormat: " + substFormat);
         }

@@ -44,25 +44,25 @@ public class BanglaGlyphRepositioner extends IndicGlyphRepositioner {
 		return Arrays.asList(CHARCTERS_TO_BE_SHIFTED_LEFT_BY_1);
 	}
 	
-	private void handleOKaarAndOUKaar(int currentIndex, List<Glyph> glyphList, char first, char second) {
-        Glyph g1 = getGlyph(first);
-        Glyph g2 = getGlyph(second);
-        glyphList.set(currentIndex, g2);
-        glyphList.add(currentIndex - 1, g1);
-	}
-	
-	private Glyph getGlyph(char c) {
-		
-		Glyph glyph = glyphSubstitutionMap.get(String.valueOf(c));
-		
-		if (glyph != null) {
-			return glyph;
-		}
-		
-		int[] metrics = cmap31.get(Integer.valueOf(c));
-        int glyphCode = metrics[0];
-        int glyphWidth = metrics[1];
-        return new Glyph(glyphCode, glyphWidth, String.valueOf(c));
-	}
+//	private void handleOKaarAndOUKaar(int currentIndex, List<Glyph> glyphList, char first, char second) {
+//        Glyph g1 = getGlyph(first);
+//        Glyph g2 = getGlyph(second);
+//        glyphList.set(currentIndex, g2);
+//        glyphList.add(currentIndex - 1, g1);
+//	}
+//	
+//	private Glyph getGlyph(char c) {
+//		
+//		Glyph glyph = glyphSubstitutionMap.get(String.valueOf(c));
+//		
+//		if (glyph != null) {
+//			return glyph;
+//		}
+//		
+//		int[] metrics = cmap31.get(Integer.valueOf(c));
+//        int glyphCode = metrics[0];
+//        int glyphWidth = metrics[1];
+//        return new Glyph(glyphCode, glyphWidth, String.valueOf(c));
+//	}
 
 }

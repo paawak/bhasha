@@ -67,6 +67,8 @@ public abstract class OpenTypeFontTableReader {
 
 	protected final RandomAccessFileOrArray rf;
 	protected final int tableLocation;
+	
+	private List<String> supportedLanguages;
 
 	public OpenTypeFontTableReader(String fontFilePath, int tableLocation)
 			throws IOException {
@@ -74,23 +76,42 @@ public abstract class OpenTypeFontTableReader {
 				new RandomAccessSourceFactory().createBestSource(fontFilePath));
 		this.tableLocation = tableLocation;
 	}
+	
+	public Language getSupportedLanguage() throws FontReadingException { 
+		
+		Language[] allLangs = Language.values();
+		
+		for (String supportedLang : supportedLanguages) {
+			for (Language lang : allLangs) {
+				if (lang.isSupported(supportedLang)) {
+					return lang;
+				}
+			}
+		}
+		
+		throw new FontReadingException("Unsupported languages " + supportedLanguages); 
+	}
 
 	/**
 	 * This is the starting point of the class. A sub-class must call this
 	 * method to start getting call backs to the {@link #readSubTable(int, int)}
 	 * method.
+	 * @throws FontReadingException 
 	 */
-	protected final void startReadingTable() throws IOException {
-		TableHeader header = readHeader();
+	protected final void startReadingTable() throws FontReadingException {
+		try {
+			TableHeader header = readHeader();
+			// read the Script tables
+			readScriptListTable(tableLocation + header.scriptListOffset);
 
-		// read the Script tables
-		readScriptListTable(tableLocation + header.scriptListOffset);
+			// read Feature table
+			readFeatureListTable(tableLocation + header.featureListOffset);
 
-		// read Feature table
-		readFeatureListTable(tableLocation + header.featureListOffset);
-
-		// read LookUpList table
-		readLookupListTable(tableLocation + header.lookupListOffset);
+			// read LookUpList table
+			readLookupListTable(tableLocation + header.lookupListOffset);
+		} catch (IOException e) {
+			throw new FontReadingException("Error reading font file", e);
+		}
 	}
 
 	protected abstract void readSubTable(int lookupType, int subTableLocation)
@@ -110,7 +131,7 @@ public abstract class OpenTypeFontTableReader {
 		
 		// read LookUp tables
 		for (int i = 0; i < lookupCount; i++) {
-//			System.out.println("#############lookupIndex=" + i);
+//			LOG.debug("#############lookupIndex=" + i);
 			int lookupTableOffset = lookupTableOffsets.get(i);
 			readLookupTable(lookupListTableLocation + lookupTableOffset);
 		}
@@ -120,13 +141,13 @@ public abstract class OpenTypeFontTableReader {
 	private void readLookupTable(int lookupTableLocation) throws IOException {
 		rf.seek(lookupTableLocation);
 		int lookupType = rf.readShort();
-		// System.out.println("lookupType=" + lookupType);
+		// LOG.debug("lookupType=" + lookupType);
 
 		// skip 2 bytes for the field `lookupFlag`
 		rf.skipBytes(2);
 
 		int subTableCount = rf.readShort();
-		// System.out.println("subTableCount=" + subTableCount);
+		// LOG.debug("subTableCount=" + subTableCount);
 
 		List<Integer> subTableOffsets = new ArrayList<Integer>();
 
@@ -136,7 +157,7 @@ public abstract class OpenTypeFontTableReader {
 		}
 
 		for (int subTableOffset : subTableOffsets) {
-			// System.out.println("subTableOffset=" + subTableOffset);
+			// LOG.debug("subTableOffset=" + subTableOffset);
 			readSubTable(lookupType, lookupTableLocation + subTableOffset);
 		}
 	}
@@ -185,7 +206,7 @@ public abstract class OpenTypeFontTableReader {
 			glyphIds.add(glyphId);
 		}
 		
-//		System.out.println("^^^^^^^^^Coverage Format 2.... " 
+//		LOG.debug("^^^^^^^^^Coverage Format 2.... " 
 //				+ "startGlyphId=" + startGlyphId
 //				+ ", endGlyphId=" + endGlyphId
 //				+ ", startCoverageIndex=" + startCoverageIndex 
@@ -202,28 +223,28 @@ public abstract class OpenTypeFontTableReader {
 		Map<String, Integer> scriptRecords = new HashMap<String, Integer>(
 				scriptCount);
 
-//		System.out.println("scriptCount=" + scriptCount);
-
 		for (int i = 0; i < scriptCount; i++) {
 			readScriptRecord(scriptListTableLocationOffset, scriptRecords);
 		}
+		
+		List<String> supportedLanguages = new ArrayList<String>(scriptCount);
 
 		for (String scriptName : scriptRecords.keySet()) {
 			readScriptTable(scriptRecords.get(scriptName));
+			supportedLanguages.add(scriptName);
 		}
+		
+		this.supportedLanguages = Collections.unmodifiableList(supportedLanguages);
 	}
 
 	private void readScriptRecord(final int scriptListTableLocationOffset,
 			Map<String, Integer> scriptRecords) throws IOException {
 		String scriptTag = rf.readString(4, "utf-8");
-		System.out.println("scriptTag=" + scriptTag);
 
 		int scriptOffset = rf.readShort();
-		// System.out.println("scriptOffset=" + scriptOffset);
 
 		scriptRecords.put(scriptTag, scriptListTableLocationOffset
 				+ scriptOffset);
-
 	}
 
 	private void readScriptTable(final int scriptTableLocationOffset)
@@ -262,9 +283,9 @@ public abstract class OpenTypeFontTableReader {
 			throws IOException {
 		rf.seek(langSysTableLocationOffset);
 		int lookupOrderOffset = rf.readShort();
-		System.out.println("lookupOrderOffset=" + lookupOrderOffset);
+		LOG.debug("lookupOrderOffset=" + lookupOrderOffset);
 		int reqFeatureIndex = rf.readShort();
-		System.out.println("reqFeatureIndex=" + reqFeatureIndex);
+		LOG.debug("reqFeatureIndex=" + reqFeatureIndex);
 		int featureCount = rf.readShort();
 
 		List<Short> featureListIndices = new ArrayList<Short>(featureCount);
@@ -272,7 +293,7 @@ public abstract class OpenTypeFontTableReader {
 			featureListIndices.add(rf.readShort());
 		}
 
-		System.out.println("featureListIndices=" + featureListIndices);
+		LOG.debug("featureListIndices=" + featureListIndices);
 
 	}
 
@@ -280,7 +301,7 @@ public abstract class OpenTypeFontTableReader {
 			throws IOException {
 		rf.seek(featureListTableLocationOffset);
 		int featureCount = rf.readShort();
-		System.out.println("featureCount=" + featureCount);
+		LOG.debug("featureCount=" + featureCount);
 
 		Map<String, Short> featureRecords = new LinkedHashMap<String, Short>(
 				featureCount);
@@ -289,7 +310,7 @@ public abstract class OpenTypeFontTableReader {
 		}
 
 		for (String featureName : featureRecords.keySet()) {
-			System.out.println("*************featureName=" + featureName);
+			LOG.debug("*************featureName=" + featureName);
 			readFeatureTable(featureListTableLocationOffset
 					+ featureRecords.get(featureName));
 		}
@@ -300,17 +321,17 @@ public abstract class OpenTypeFontTableReader {
 			throws IOException {
 		rf.seek(featureTableLocationOffset);
 		int featureParamsOffset = rf.readShort();
-		System.out.println("featureParamsOffset=" + featureParamsOffset);
+		LOG.debug("featureParamsOffset=" + featureParamsOffset);
 
 		int lookupCount = rf.readShort();
-		System.out.println("lookupCount=" + lookupCount);
+		LOG.debug("lookupCount=" + lookupCount);
 
 		List<Short> lookupListIndices = new ArrayList<Short>(lookupCount);
 		for (int i = 0; i < lookupCount; i++) {
 			lookupListIndices.add(rf.readShort());
 		}
 
-//		System.out.println("lookupListIndices=" + lookupListIndices);
+//		LOG.debug("lookupListIndices=" + lookupListIndices);
 
 	}
 
@@ -323,10 +344,10 @@ public abstract class OpenTypeFontTableReader {
 		int featureListOffset = rf.readUnsignedShort();
 		int lookupListOffset = rf.readUnsignedShort();
 
-		// System.out.println("version=" + version);
-		// System.out.println("scriptListOffset=" + scriptListOffset);
-		// System.out.println("featureListOffset=" + featureListOffset);
-		// System.out.println("lookupListOffset=" + lookupListOffset);
+		// LOG.debug("version=" + version);
+		// LOG.debug("scriptListOffset=" + scriptListOffset);
+		// LOG.debug("featureListOffset=" + featureListOffset);
+		// LOG.debug("lookupListOffset=" + lookupListOffset);
 
 		TableHeader header = new TableHeader(version, scriptListOffset,
 				featureListOffset, lookupListOffset);

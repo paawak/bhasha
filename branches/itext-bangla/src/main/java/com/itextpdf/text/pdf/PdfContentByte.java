@@ -50,13 +50,13 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -1654,33 +1654,9 @@ public class PdfContentByte {
     private void showText2(final String text) {
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
-        
-        if (state.fontDetails.needIndividulaGlyphPlacement(text)) {
-        	showTextThatNeedIndividualPlacement(text);
-        } else {
-        	 byte b[] = state.fontDetails.convertToBytes(text);
-             escapeString(b, content);
-        }
-       
+        byte b[] = state.fontDetails.convertToBytes(text);
+        escapeString(b, content);
     }
-    
-	private void showTextThatNeedIndividualPlacement(final String text) {
-		List<Glyph> glyphs = state.fontDetails.convertToGlyphs(text);
-		for (int i = 0; i < glyphs.size(); i++) {
-			Glyph glyph = glyphs.get(i);
-			escapeString(FontDetails.convertGlyphToBytes(glyph), content);
-			if (i + 1 < glyphs.size()) {
-				Glyph nextGlyph = glyphs.get(i + 1);
-				//FIXME: a horrible hack as a POC that inidividual character displacement can be handled
-				if (nextGlyph.chars.equals("\u09CB") || nextGlyph.chars.equals("\u09CC")) {//Bangla ou-kaar
-					//displacement
-					float displacement = nextGlyph.width + glyph.width;
-					System.err.println("displacement=" + displacement); 
-					content.append(displacement/2);
-				}
-			}
-		}
-	}
 
     /**
      * Shows the <CODE>text</CODE>.
@@ -1691,24 +1667,9 @@ public class PdfContentByte {
         if (!inText && writer.isTagged()) {
             beginText(true);
         }
-        
-        boolean needIndividulaGlyphPlacement =  state.fontDetails.needIndividulaGlyphPlacement(text);
-        
-        if (needIndividulaGlyphPlacement) {
-        	content.append("[");
-        }
-        
         showText2(text);
         updateTx(text, 0);
-        
-        if (needIndividulaGlyphPlacement) {
-        	content.append("]TJ");
-        } else {
-        	content.append("Tj");
-        }
-        
-        content.append_i(separator);
-        
+        content.append("Tj").append_i(separator);
     }
 
     /**

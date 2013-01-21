@@ -54,7 +54,9 @@ import java.util.TreeSet;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.pdf.fonts.otf.Language;
 import com.itextpdf.text.pdf.languages.BanglaGlyphRepositioner;
+import com.itextpdf.text.pdf.languages.GlyphRepositioner;
 import com.itextpdf.text.pdf.languages.IndicCompositeCharacterComparator;
 
 /**
@@ -229,8 +231,9 @@ class FontDetails {
                             longTag.put(Integer.valueOf(metrics[0]), new int[]{metrics[0], metrics[1], ttu.getUnicodeDifferences(b[k] & 0xff)});
                             glyph[i++] = (char)metrics[0];
                         }
-                    }
-                    else {
+                    } else if (canApplyGlyphSubstitution()) {
+                    	return convertGlyphToBytes(convertToGlyphs(text));
+                    } else {
                     	for (int k = 0; k < len; ++k) {
                     		int val;
                     		if (Utilities.isSurrogatePair(text, k)) {
@@ -262,14 +265,13 @@ class FontDetails {
         return b;
     }
     
-    boolean needIndividulaGlyphPlacement(String text) {
-    	return (fontType == BaseFont.FONT_TYPE_TTUNI)
-    			&& (ttu.getGlyphSubstitutionMap() != null);
+    private boolean canApplyGlyphSubstitution() {
+    	return (fontType == BaseFont.FONT_TYPE_TTUNI) && (ttu.getGlyphSubstitutionMap() != null);
     }
     
-    List<Glyph> convertToGlyphs(String text) {
+    private List<Glyph> convertToGlyphs(String text) {
     	
-    	if (!needIndividulaGlyphPlacement(text)) {
+    	if (!canApplyGlyphSubstitution()) {
     		throw new IllegalArgumentException("Make sure the font type if TTF Unicode and a valid GlyphSubstitutionTable exists!"); 
     	}
     	
@@ -328,38 +330,30 @@ class FontDetails {
             }
         }
         
-        //FIXME:: do not hard-code the repositioner here
-        new BanglaGlyphRepositioner(Collections.unmodifiableMap(ttu.cmap31), glyphSubstitutionMap)
-        	.repositionGlyphs(glyphList);  
+        GlyphRepositioner glyphRepositioner = getGlyphRepositioner();
+        
+        if (glyphRepositioner != null) {
+        	glyphRepositioner.repositionGlyphs(glyphList);
+        }
         
         return glyphList;
     }
     
-    static byte[] convertGlyphToBytes(Glyph glyph) { 
-    	try {
-    		char[] charArray = new char[1];
-    		charArray[0] = (char) glyph.code;
-			return new String(charArray).getBytes(CJKFont.CJK_ENCODING);
-		} catch (UnsupportedEncodingException e) {
-			 throw new ExceptionConverter(e);
+    private GlyphRepositioner getGlyphRepositioner() {
+    	Language language = ttu.getSupportedLanguage();
+    	
+    	if (language == null) {
+    		throw new IllegalArgumentException("The supported language field cannot be null in " + ttu.getClass().getName()); 
+    	}
+    	
+    	switch (language) {
+		case BENGALI:
+			return new BanglaGlyphRepositioner(Collections.unmodifiableMap(ttu.cmap31), ttu.getGlyphSubstitutionMap());
+		default:
+			return null;
 		}
     }
     
-//    static byte[] convertGlyphToBytes(List<Glyph> glyphs) { 
-//    	try {
-//    		char[] charArray = new char[glyphs.size()];
-//    		int i = 0;
-//    		
-//    		for (Glyph glyph : glyphs) {
-//    			charArray[i++] = (char) glyph.code;
-//    		}
-//    		
-//			return new String(charArray).getBytes(CJKFont.CJK_ENCODING);
-//		} catch (UnsupportedEncodingException e) {
-//			 throw new ExceptionConverter(e);
-//		}
-//    }
-
     /**
      * Writes the font definition to the document.
      * @param writer the <CODE>PdfWriter</CODE> of this document
@@ -420,4 +414,16 @@ class FontDetails {
     public void setSubset(boolean subset) {
         this.subset = subset;
     }
+    
+    private static byte[] convertGlyphToBytes(List<Glyph> glyphs)
+			throws UnsupportedEncodingException {
+		char[] charArray = new char[glyphs.size()];
+		int i = 0;
+
+		for (Glyph glyph : glyphs) {
+			charArray[i++] = (char) glyph.code;
+		}
+
+		return new String(charArray).getBytes(CJKFont.CJK_ENCODING);
+	}
 }
