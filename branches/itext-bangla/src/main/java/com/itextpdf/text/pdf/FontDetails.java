@@ -269,7 +269,7 @@ class FontDetails {
     	return (fontType == BaseFont.FONT_TYPE_TTUNI) && (ttu.getGlyphSubstitutionMap() != null);
     }
     
-    private List<Glyph> convertToGlyphs(String text) {
+    private List<Glyph> convertToGlyphs(final String text) {
     	
     	if (!canApplyGlyphSubstitution()) {
     		throw new IllegalArgumentException("Make sure the font type if TTF Unicode and a valid GlyphSubstitutionTable exists!"); 
@@ -282,14 +282,6 @@ class FontDetails {
         // for Indic languages: push back the CompositeCharacters with smaller length
         Set<String> compositeCharacters = new TreeSet<String>(new IndicCompositeCharacterComparator());
         compositeCharacters.addAll(glyphSubstitutionMap.keySet());
-        
-//        List<String> compositeCharacters = new ArrayList<String>();
-//        
-//        for (String glyphSubKey : glyphSubstitutionMap.keySet()) {
-//        	compositeCharacters.add(0, glyphSubKey);
-//        }
-        
-//        System.out.println("compositeCharacters=" + compositeCharacters); 
         
         // convert the text to a list of Glyph, also take care of the substitution
         ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(compositeCharacters.toArray(new String[0]));
@@ -316,6 +308,12 @@ class FontDetails {
             
         }
         
+        GlyphRepositioner glyphRepositioner = getGlyphRepositioner();
+        
+        if (glyphRepositioner != null) {
+        	glyphRepositioner.repositionGlyphs(glyphList);
+        }
+        
         char[] charEncodedGlyphCodes = new char[glyphList.size()];
         
         // process each Glyph thus obtained
@@ -328,12 +326,6 @@ class FontDetails {
                 // FIXME: this is buggy as the 3rd arg. should be a String as a Glyph can represent more than 1 char
                 longTag.put(glyphCode, new int[]{glyph.code,  glyph.width, glyph.chars.charAt(0)}); 
             }
-        }
-        
-        GlyphRepositioner glyphRepositioner = getGlyphRepositioner();
-        
-        if (glyphRepositioner != null) {
-        	glyphRepositioner.repositionGlyphs(glyphList);
         }
         
         return glyphList;
