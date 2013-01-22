@@ -232,7 +232,7 @@ class FontDetails {
                             glyph[i++] = (char)metrics[0];
                         }
                     } else if (canApplyGlyphSubstitution()) {
-                    	return convertGlyphToBytes(convertToGlyphs(text));
+                    	return convertToBytesAfterGlyphSubstitution(text);
                     } else {
                     	for (int k = 0; k < len; ++k) {
                     		int val;
@@ -269,7 +269,7 @@ class FontDetails {
     	return (fontType == BaseFont.FONT_TYPE_TTUNI) && (ttu.getGlyphSubstitutionMap() != null);
     }
     
-    private List<Glyph> convertToGlyphs(final String text) {
+    private byte[] convertToBytesAfterGlyphSubstitution(final String text) throws UnsupportedEncodingException { 
     	
     	if (!canApplyGlyphSubstitution()) {
     		throw new IllegalArgumentException("Make sure the font type if TTF Unicode and a valid GlyphSubstitutionTable exists!"); 
@@ -328,7 +328,7 @@ class FontDetails {
             }
         }
         
-        return glyphList;
+        return new String(charEncodedGlyphCodes).getBytes(CJKFont.CJK_ENCODING);
     }
     
     private GlyphRepositioner getGlyphRepositioner() {
@@ -406,16 +406,5 @@ class FontDetails {
     public void setSubset(boolean subset) {
         this.subset = subset;
     }
-    
-    private static byte[] convertGlyphToBytes(List<Glyph> glyphs)
-			throws UnsupportedEncodingException {
-		char[] charArray = new char[glyphs.size()];
-		int i = 0;
-
-		for (Glyph glyph : glyphs) {
-			charArray[i++] = (char) glyph.code;
-		}
-
-		return new String(charArray).getBytes(CJKFont.CJK_ENCODING);
-	}
+   
 }
