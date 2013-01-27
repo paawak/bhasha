@@ -49,17 +49,22 @@ public class BanglaPdfGenerationTest {
 //     * \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf
 //     * 
 //     */
-    private static final String BANGLA_TEXT = "আমি কোন চৌকো চৌ পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
-//	private static final String BANGLA_TEXT = "\u0995\u09d7\u09a8";
+    private static final String INDIC_TEXT = "আমি কোন চৌকো চৌ পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
+//    private static final String INDIC_TEXT = "কোম ঝরের ছো চো";
+//    private static final String INDIC_TEXT = "চৌ";
+//	private static final String INDIC_TEXT = "\u0995\u09c7\u09d7"; //kou
+//	private static final String INDIC_TEXT = "\u0995\u09c7\u09be"; //ko
+//	private static final String INDIC_TEXT = "लक्ष्मी खिरा लग्न मुर्गा";
     
-//    private static final String BANGLA_TEXT = "আমি ঝরের কাছে রেখে গেলাম আমার ঠিকানা মিশরের মমি";
+//    private static final String INDIC_TEXT = "আমি ঝরের কাছে রেখে গেলাম আমার ঠিকানা মিশরের মমি";
 
-    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
-//    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
-//    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/VRINDA.TTF";
-//    private static final String BANGLA_FONT = "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
+    private static final String INDIC_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
+//    private static final String INDIC_FONT = "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
+//    private static final String INDIC_FONT = "/com/swayam/bhasha/font/VRINDA.TTF";
+//    private static final String INDIC_FONT = "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
+//	private static final String INDIC_FONT = "/com/swayam/bhasha/font/MANGAL.TTF";
 
-    // private static final String BANGLA_FONT =
+    // private static final String INDIC_FONT =
     // "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
 
     public void createPdf(String filename) throws DocumentException, IOException {
@@ -73,11 +78,11 @@ public class BanglaPdfGenerationTest {
         Paragraph paragraph = new Paragraph();
         Font font = new Font(
         		BaseFont.createFont(
-        				BanglaPdfGenerationTest.class.getResource(BANGLA_FONT).getFile(),
+        				BanglaPdfGenerationTest.class.getResource(INDIC_FONT).getFile(),
         				BaseFont.IDENTITY_H, false));
         font.setColor(BaseColor.BLUE);
         font.setSize(20);
-        paragraph.add(new Phrase(BANGLA_TEXT, font));
+        paragraph.add(new Phrase(INDIC_TEXT, font));
         document.add(paragraph);
         // step 5
         document.close();
@@ -86,7 +91,9 @@ public class BanglaPdfGenerationTest {
     @Test
     public void testGenerate() throws IOException, DocumentException {
         String fileName = System.getProperty("user.home") + "/a.pdf";
+        System.out.println(Thread.getDefaultUncaughtExceptionHandler());
         new BanglaPdfGenerationTest().createPdf(fileName);
+        System.out.println(Thread.getDefaultUncaughtExceptionHandler());
     }
 
 }
