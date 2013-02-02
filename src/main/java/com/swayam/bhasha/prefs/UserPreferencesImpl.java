@@ -44,7 +44,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private static final String PREFERENCE_KEY = UserPreferencesImpl.class.getSimpleName();
 
-    private final Logger log = Logger.getLogger(UserPreferencesImpl.class);
+    private static final Logger log = Logger.getLogger(UserPreferencesImpl.class);
 
     private Locale defaultLanguage;
 
