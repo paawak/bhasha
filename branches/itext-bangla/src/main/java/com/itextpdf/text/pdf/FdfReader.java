@@ -1,5 +1,5 @@
 /*
- * $Id: FdfReader.java 5075 2012-02-27 16:36:18Z blowagie $
+ * $Id: FdfReader.java 5666 2013-01-30 08:32:14Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -216,6 +216,8 @@ public class FdfReader extends PdfReader {
                     return new String(b, "GBK");
                 else if (encoding.equals(PdfName.BIGFIVE))
                     return new String(b, "Big5");
+                else if (encoding.equals(PdfName.UTF_8))
+                    return new String(b, "UTF8");
             }
             catch (Exception e) {
             }

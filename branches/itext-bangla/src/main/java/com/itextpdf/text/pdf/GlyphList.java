@@ -1,5 +1,5 @@
 /*
- * $Id: GlyphList.java 5075 2012-02-27 16:36:18Z blowagie $
+ * $Id: GlyphList.java 5669 2013-02-02 18:49:18Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -108,7 +108,15 @@ public class GlyphList {
     }
 
     public static int[] nameToUnicode(String name) {
-        return names2unicode.get(name);
+        int[] v = names2unicode.get(name);
+        if (v == null && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
+            try {
+                return new int[]{Integer.parseInt(name.substring(3), 16)};
+            }
+            catch (Exception ex) {
+            }
+        }
+        return v;
     }
 
     public static String unicodeToName(int num) {

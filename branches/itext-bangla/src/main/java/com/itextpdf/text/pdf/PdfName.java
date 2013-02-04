@@ -1,5 +1,5 @@
 /*
- * $Id: PdfName.java 5649 2013-01-10 12:09:52Z dkoleda $
+ * $Id: PdfName.java 5666 2013-01-30 08:32:14Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -2011,6 +2011,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName USERUNIT = new PdfName("UserUnit");
     /** A name */
     public static final PdfName USETHUMBS = new PdfName("UseThumbs");
+    /** A name */
+    public static final PdfName UTF_8 = new PdfName("utf_8");
     /** A name */
     public static final PdfName V = new PdfName("V");
     /** A name */

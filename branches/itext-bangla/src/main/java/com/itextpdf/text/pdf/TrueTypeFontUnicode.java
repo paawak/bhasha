@@ -1,5 +1,5 @@
 /*
- * $Id: TrueTypeFontUnicode.java 5515 2012-11-02 14:11:48Z achingarev $
+ * $Id: TrueTypeFontUnicode.java 5670 2013-02-03 19:36:03Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

@@ -1,5 +1,5 @@
 /*
- * $Id: CMapAwareDocumentFont.java 5654 2013-01-13 09:27:26Z blowagie $
+ * $Id: CMapAwareDocumentFont.java 5665 2013-01-27 20:27:50Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -159,11 +159,11 @@ public class CMapAwareDocumentFont extends DocumentFont {
     		return;
     	
         cidbyte2uni = new char[256];
-        if (toUnicodeCmap == null) {
-        	for (int k = 0; k < e.length; ++k) {
-        		int key = e[k];
-        		cidbyte2uni[key] = (char)byte2uni.get(key);
-        	}
+        for (int k = 0; k < e.length; ++k) {
+            int key = e[k];
+            cidbyte2uni[key] = (char)byte2uni.get(key);
+        }
+        if (toUnicodeCmap != null) {
         	/*
         	for (int k = 0; k < e.length; ++k) {
         		// Kevin Day:
@@ -181,8 +181,6 @@ public class CMapAwareDocumentFont extends DocumentFont {
         		}
         	}
         	*/
-        }
-        else {
         	Map<Integer, Integer> dm = toUnicodeCmap.createDirectMapping();
         	for (Map.Entry<Integer, Integer> kv : dm.entrySet()) {
         		if (kv.getKey() < 256) {

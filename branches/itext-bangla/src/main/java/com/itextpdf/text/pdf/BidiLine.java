@@ -1,5 +1,5 @@
 /*
- * $Id: BidiLine.java 5655 2013-01-13 10:58:05Z blowagie $
+ * $Id: BidiLine.java 5667 2013-01-31 10:01:34Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -337,7 +337,7 @@ public class BidiLine {
                 ArrayList<PdfChunk> ar = new ArrayList<PdfChunk>();
                 PdfChunk ck = new PdfChunk("", detailChunks[0]);
                 ar.add(ck);
-                return new PdfLine(0, 0, 0, alignment, true, ar, isRTL);
+                return new PdfLine(0, 0, width, alignment, true, ar, isRTL);
             }
         }
         float originalWidth = width;
@@ -372,8 +372,13 @@ public class BidiLine {
                 continue;
             if (surrogate)
                 charWidth = ck.getCharWidth(uniC);
-            else
-                charWidth = ck.getCharWidth(text[currentChar]);
+            else {
+                if (ck.isImage()) {
+                    charWidth = ck.getImageWidth();
+                } else {
+                    charWidth = ck.getCharWidth(text[currentChar]);
+                }
+            }
             splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
             if (splitChar && Character.isWhitespace((char)uniC))
                 lastSplit = currentChar;
