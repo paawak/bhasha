@@ -32,6 +32,7 @@ import com.swayam.bhasha.oldview.impl.SinglePageContainer;
 import com.swayam.bhasha.prefs.PreferenceSetterDialog;
 import com.swayam.bhasha.prefs.UserPreferences;
 import com.swayam.bhasha.prefs.UserPreferencesImpl;
+import com.swayam.bhasha.utils.page.IndicPane;
 
 /**
  * 
@@ -64,8 +65,8 @@ public class BhashaLauncher {
             // );
             // UIManager.setLookAndFeel("javax.swing.plaf.multi.MultiLookAndFeel"
             // );
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             // UIManager.setLookAndFeel(
             // "com.sun.java.swing.plaf.motif.MotifLookAndFeel");
             // UIManager.setLookAndFeel(
@@ -81,22 +82,22 @@ public class BhashaLauncher {
         }
 
         // try to read preference data
-        UserPreferences prefs = new UserPreferencesImpl().load();
+//        UserPreferences prefs = new UserPreferencesImpl().load();
+//
+//        if (prefs == null) {
+//            PreferenceSetterDialog prefDialog = new PreferenceSetterDialog(new JFrame(), true);
+//            prefDialog.setVisible(true);
+//            prefs = new UserPreferencesImpl().load();
+//        }
+//
+//        if (prefs == null) {
+//            JOptionPane.showMessageDialog(null, "Sorry! There was a problem.", "Please try after sometime.", JOptionPane.ERROR_MESSAGE);
+//            System.exit(0);
+//        }
+//
+//        Locale defLocale = prefs.getDefaultLanguage();
 
-        if (prefs == null) {
-            PreferenceSetterDialog prefDialog = new PreferenceSetterDialog(new JFrame(), true);
-            prefDialog.setVisible(true);
-            prefs = new UserPreferencesImpl().load();
-        }
-
-        if (prefs == null) {
-            JOptionPane.showMessageDialog(null, "Sorry! There was a problem.", "Please try after sometime.", JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-        }
-
-        Locale defLocale = prefs.getDefaultLanguage();
-
-        VIEW_INSTANCE = new BhashaDefaultView(new SinglePageContainer(), prefs.getPreferredLanguages(), defLocale);
+        VIEW_INSTANCE = new BhashaDefaultView(new SinglePageContainer(), new Locale[]{IndicPane.BANGLA_LOCALE, IndicPane.HINDI_LOCALE},  IndicPane.BANGLA_LOCALE);
     }
 
     /**
