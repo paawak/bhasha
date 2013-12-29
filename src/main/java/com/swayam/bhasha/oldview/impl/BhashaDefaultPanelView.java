@@ -166,7 +166,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
         rdBtBangla.setFont(new java.awt.Font("SolaimanLipi", 0, 18)); // NOI18N
         rdBtBangla.setMnemonic('b');
         rdBtBangla.setSelected(true);
-        rdBtBangla.setText("বাঙ্গলা");
+        rdBtBangla.setText("\u09ac\u09be\u0999\u09cd\u0997\u09b2\u09be");
         rdBtBangla.setMaximumSize(new java.awt.Dimension(300, 35));
         rdBtBangla.setMinimumSize(new java.awt.Dimension(65, 35));
         rdBtBangla.setPreferredSize(new java.awt.Dimension(300, 35));
@@ -186,7 +186,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
         btnGrpLanguage.add(rdBtHindi);
         rdBtHindi.setFont(new java.awt.Font("Mangal", 1, 14));
         rdBtHindi.setMnemonic('d');
-        rdBtHindi.setText("देवनागरि");
+        rdBtHindi.setText("\u0926\u0947\u0935\u0928\u093e\u0917\u0930\u093f");
         rdBtHindi.setMaximumSize(new java.awt.Dimension(110, 33));
         rdBtHindi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
