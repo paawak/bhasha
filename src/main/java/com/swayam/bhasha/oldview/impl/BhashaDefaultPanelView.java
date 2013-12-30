@@ -51,8 +51,6 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
     private static final Logger logger = Logger.getLogger(BhashaDefaultPanelView.class);
 
-    private final JFrame parent;
-
     static {
         // for debug only
         logger.info("*******Bangla fonts:\n" + FontLoader.getBanglaFonts());
@@ -60,9 +58,8 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
         logger.info("*******English fonts:\n" + FontLoader.getEnglishFonts());
     }
 
-    public BhashaDefaultPanelView(JFrame parent, PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
+    public BhashaDefaultPanelView(PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
 
-        this.parent = parent;
         setPageContainer(pageContainer);
 
         initComponents();
@@ -110,10 +107,6 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
     public PageContainer getPageContainer() {
         return pageContainer;
-    }
-
-    public JFrame getJFrame() {
-        return parent;
     }
 
     /**
