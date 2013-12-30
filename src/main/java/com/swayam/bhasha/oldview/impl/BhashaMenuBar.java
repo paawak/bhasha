@@ -285,12 +285,9 @@ public class BhashaMenuBar extends JMenuBar {
 	// :
 	// event_jMnResetSettingsMouseReleased
 	if (new UserPreferencesImpl().reset()) {
-	    JOptionPane.showMessageDialog(this,
-		    "User settings deleted successfully", "Deleted",
-		    JOptionPane.INFORMATION_MESSAGE);
+	    JOptionPane.showMessageDialog(this, "User settings deleted successfully", "Deleted", JOptionPane.INFORMATION_MESSAGE);
 	} else {
-	    JOptionPane.showMessageDialog(this, "Could not delete settings",
-		    "Sorry", JOptionPane.ERROR_MESSAGE);
+	    JOptionPane.showMessageDialog(this, "Could not delete settings", "Sorry", JOptionPane.ERROR_MESSAGE);
 	}
 
     }// GEN-LAST:event_jMnResetSettingsMouseReleased
@@ -394,8 +391,7 @@ public class BhashaMenuBar extends JMenuBar {
     private void generateOutput(final String type) {
 	SwingUtilities.invokeLater(new Runnable() {
 	    public void run() {
-		GenerateOutput generateoutput = new GenerateOutput(true,
-			bhashaView.getPageContainer(), type);
+		GenerateOutput generateoutput = new GenerateOutput(true, bhashaView.getPageContainer(), type);
 		generateoutput.setVisible(true);
 	    }
 	});
