@@ -1,7 +1,6 @@
 package com.swayam.bhasha.oldview.impl;
 
 import java.awt.BorderLayout;
-import java.awt.Window;
 import java.util.Locale;
 
 import javax.swing.JPanel;
@@ -27,8 +26,8 @@ public class BhashaMainPanel extends JPanel {
 
     private final JScrollPane rawHtmlViewPane;
 
-    public BhashaMainPanel(Window parent, PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
-	bhashaView = new BhashaDefaultPanelView(parent, pageContainer, supportedLanguages, defaultLocale);
+    public BhashaMainPanel(PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
+	bhashaView = new BhashaDefaultPanelView(pageContainer, supportedLanguages, defaultLocale);
 	bhashaView.setPageContainer(pageContainer);
 
 	tabbedPane = new JTabbedPane();

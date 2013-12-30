@@ -22,7 +22,7 @@ public class BhashaDefaultFrame extends JFrame {
     private final BhashaMainPanel bhashaMainPanel;
 
     public BhashaDefaultFrame(PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
-	bhashaMainPanel = new BhashaMainPanel(this, pageContainer, supportedLanguages, defaultLocale);
+	bhashaMainPanel = new BhashaMainPanel(pageContainer, supportedLanguages, defaultLocale);
 
 	ImageIcon img = new ImageIcon(getClass().getResource("/images/BanglaLogo.jpg"));
 	setIconImage(img.getImage());

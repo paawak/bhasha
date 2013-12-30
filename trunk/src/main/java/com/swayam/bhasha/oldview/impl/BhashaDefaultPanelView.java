@@ -9,7 +9,6 @@ package com.swayam.bhasha.oldview.impl;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,8 +49,6 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
     private static final Logger logger = Logger.getLogger(BhashaDefaultPanelView.class);
 
-    private final Window window;
-
     static {
 	// for debug only
 	logger.info("*******Bangla fonts:\n" + FontLoader.getBanglaFonts());
@@ -59,9 +56,8 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	logger.info("*******English fonts:\n" + FontLoader.getEnglishFonts());
     }
 
-    public BhashaDefaultPanelView(Window window, PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
+    public BhashaDefaultPanelView(PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
 
-	this.window = window;
 	setPageContainer(pageContainer);
 
 	initComponents();
@@ -907,11 +903,6 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
 	btAlignRight.addActionListener(StyleActionFactory.getAlignRight());
 
-    }
-
-    @Override
-    public Window getMainWindow() {
-	return window;
     }
 
 }
