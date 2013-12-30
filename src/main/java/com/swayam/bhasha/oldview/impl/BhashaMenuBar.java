@@ -296,7 +296,7 @@ public class BhashaMenuBar extends JMenuBar {
 	// FIRST
 	// :
 	// event_jMnKeyboardMouseReleased
-	new KeyTable(bhashaView.getMainWindow()).setVisible(true);
+	new KeyTable().setVisible(true);
 	// reload the charMap in case the user has changed settings
 	bhashaView.refillFontFamilyCombo();
     }// GEN-LAST:event_jMnKeyboardMouseReleased

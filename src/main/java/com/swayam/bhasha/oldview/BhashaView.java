@@ -14,7 +14,6 @@
 
 package com.swayam.bhasha.oldview;
 
-import java.awt.Window;
 import java.util.Locale;
 
 /**
@@ -37,7 +36,5 @@ public interface BhashaView {
     void open();
 
     void newPage();
-
-    Window getMainWindow();
 
 }
