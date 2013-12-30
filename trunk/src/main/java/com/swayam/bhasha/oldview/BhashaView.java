@@ -28,7 +28,5 @@ public interface BhashaView {
 	
 	PageContainer getPageContainer();
 	
-	JFrame getJFrame();
-
 }
 

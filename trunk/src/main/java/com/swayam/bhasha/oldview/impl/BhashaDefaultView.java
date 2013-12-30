@@ -38,7 +38,7 @@ public class BhashaDefaultView extends JFrame implements BhashaView {
     private final JScrollPane rawHtmlViewPane;
 
     public BhashaDefaultView(PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
-        bhashaView = new BhashaDefaultPanelView(this, pageContainer, supportedLanguages, defaultLocale);
+        bhashaView = new BhashaDefaultPanelView(pageContainer, supportedLanguages, defaultLocale);
         setPageContainer(pageContainer);
 
         ImageIcon img = new ImageIcon(getClass().getResource("/images/BanglaLogo.jpg"));
@@ -79,10 +79,6 @@ public class BhashaDefaultView extends JFrame implements BhashaView {
 
     public PageContainer getPageContainer() {
         return bhashaView.getPageContainer();
-    }
-
-    public JFrame getJFrame() {
-        return this;
     }
 
     /**
