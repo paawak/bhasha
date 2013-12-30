@@ -14,19 +14,30 @@
 
 package com.swayam.bhasha.oldview;
 
-import javax.swing.JFrame;
+import java.awt.Window;
+import java.util.Locale;
 
 /**
  * Created on Jul 14, 2007, 5:05:13 AM
+ * 
  * @author paawak
- *
+ * 
  */
 
 public interface BhashaView {
-	
-	void setPageContainer(PageContainer pageContainer);
-	
-	PageContainer getPageContainer();
-	
-}
 
+    void setPageContainer(PageContainer pageContainer);
+
+    PageContainer getPageContainer();
+
+    void setCurrentLocale(Locale locale);
+
+    void refillFontFamilyCombo();
+
+    void open();
+
+    void newPage();
+
+    Window getMainWindow();
+
+}
