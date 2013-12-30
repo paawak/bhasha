@@ -27,7 +27,7 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
-import com.swayam.bhasha.oldview.impl.BhashaDefaultView;
+import com.swayam.bhasha.oldview.impl.BhashaDefaultFrame;
 import com.swayam.bhasha.oldview.impl.SinglePageContainer;
 import com.swayam.bhasha.prefs.PreferenceSetterDialog;
 import com.swayam.bhasha.prefs.UserPreferences;
@@ -97,7 +97,7 @@ public class BhashaLauncher {
 //
 //        Locale defLocale = prefs.getDefaultLanguage();
 
-        VIEW_INSTANCE = new BhashaDefaultView(new SinglePageContainer(), new Locale[]{IndicPane.BANGLA_LOCALE, IndicPane.HINDI_LOCALE},  IndicPane.BANGLA_LOCALE);
+        VIEW_INSTANCE = new BhashaDefaultFrame(new SinglePageContainer(), new Locale[]{IndicPane.BANGLA_LOCALE, IndicPane.HINDI_LOCALE},  IndicPane.BANGLA_LOCALE);
     }
 
     /**
