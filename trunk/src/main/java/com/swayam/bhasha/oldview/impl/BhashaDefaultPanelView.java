@@ -45,12 +45,10 @@ import com.swayam.bhasha.utils.page.IndicPane;
 import com.swayam.generic.utils.FontLoader;
 import com.swayam.generic.utils.JComboUtils;
 
+@SuppressWarnings("serial")
 public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
-    private static final long serialVersionUID = 6840005430680654312L;
-
-    private static final Logger logger = Logger
-	    .getLogger(BhashaDefaultPanelView.class);
+    private static final Logger logger = Logger.getLogger(BhashaDefaultPanelView.class);
 
     private final Window window;
 
@@ -61,8 +59,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	logger.info("*******English fonts:\n" + FontLoader.getEnglishFonts());
     }
 
-    public BhashaDefaultPanelView(Window window, PageContainer pageContainer,
-	    Locale[] supportedLanguages, Locale defaultLocale) {
+    public BhashaDefaultPanelView(Window window, PageContainer pageContainer, Locale[] supportedLanguages, Locale defaultLocale) {
 
 	this.window = window;
 	setPageContainer(pageContainer);
@@ -135,7 +132,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	pnlAutoSave = new javax.swing.JPanel();
 	lbSaveInterval = new javax.swing.JLabel();
 	txtSaveInterval = new javax.swing.JTextField();
-	cbSaveIntervalUnit = new JComboBox(new String[] { "Sec", "Min" });
+	cbSaveIntervalUnit = new JComboBox<>(new String[] { "Sec", "Min" });
 	pnlStyleControl = new javax.swing.JPanel();
 	btBold = new javax.swing.JToggleButton();
 	btItalic = new javax.swing.JToggleButton();
@@ -143,9 +140,9 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	btAlignLeft = new javax.swing.JToggleButton();
 	btAlignCenter = new javax.swing.JToggleButton();
 	btAlignRight = new javax.swing.JToggleButton();
-	cbFontFamily = new javax.swing.JComboBox();
-	cbFontColor = new javax.swing.JComboBox();
-	cbFontSize = new javax.swing.JComboBox();
+	cbFontFamily = new javax.swing.JComboBox<>();
+	cbFontColor = new javax.swing.JComboBox<>();
+	cbFontSize = new javax.swing.JComboBox<>();
 	viewPnl = new javax.swing.JPanel();
 
 	setLayout(new java.awt.GridBagLayout());
@@ -154,9 +151,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	pnlMainControl.setMinimumSize(new java.awt.Dimension(0, 90));
 	pnlMainControl.setPreferredSize(new java.awt.Dimension(736, 90));
 
-	pnlLanguage.setBorder(javax.swing.BorderFactory.createTitledBorder(
-		javax.swing.BorderFactory.createEtchedBorder(),
-		"Current Language:"));
+	pnlLanguage.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Current Language:"));
 	pnlLanguage.setMaximumSize(new java.awt.Dimension(350, 35));
 	pnlLanguage.setMinimumSize(new java.awt.Dimension(193, 35));
 	pnlLanguage.setPreferredSize(new java.awt.Dimension(193, 35));
@@ -204,8 +199,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	btnGrpLanguage.add(rdBtEnglish);
 	rdBtEnglish.setFont(new java.awt.Font("Arial", 1, 14));
 	rdBtEnglish.setMnemonic('e');
-	java.util.ResourceBundle bundle = java.util.ResourceBundle
-		.getBundle("props/Display"); // NOI18N
+	java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("props/Display"); // NOI18N
 	rdBtEnglish.setText(bundle.getString("rdBtEnglish")); // NOI18N
 	rdBtEnglish.setMaximumSize(new java.awt.Dimension(110, 25));
 	rdBtEnglish.addActionListener(new java.awt.event.ActionListener() {
@@ -269,8 +263,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	pnlStyleControl.setPreferredSize(new java.awt.Dimension(792, 25));
 	pnlStyleControl.setLayout(new java.awt.GridBagLayout());
 
-	btBold.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-		"/images/bold.gif"))); // NOI18N
+	btBold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/bold.gif"))); // NOI18N
 	btBold.addMouseListener(new java.awt.event.MouseAdapter() {
 	    @Override
 	    public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -285,8 +278,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 0);
 	pnlStyleControl.add(btBold, gridBagConstraints);
 
-	btItalic.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-		"/images/italic.gif"))); // NOI18N
+	btItalic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/italic.gif"))); // NOI18N
 	btItalic.addMouseListener(new java.awt.event.MouseAdapter() {
 	    @Override
 	    public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -300,8 +292,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
 	pnlStyleControl.add(btItalic, gridBagConstraints);
 
-	btUnderline.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-		"/images/underline.gif"))); // NOI18N
+	btUnderline.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/underline.gif"))); // NOI18N
 	btUnderline.addMouseListener(new java.awt.event.MouseAdapter() {
 	    @Override
 	    public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -316,8 +307,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	pnlStyleControl.add(btUnderline, gridBagConstraints);
 
 	btnGrpAlignment.add(btAlignLeft);
-	btAlignLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-		"/images/left.gif"))); // NOI18N
+	btAlignLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/left.gif"))); // NOI18N
 	btAlignLeft.setSelected(true);
 	btAlignLeft.addMouseListener(new java.awt.event.MouseAdapter() {
 	    @Override
@@ -334,8 +324,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	pnlStyleControl.add(btAlignLeft, gridBagConstraints);
 
 	btnGrpAlignment.add(btAlignCenter);
-	btAlignCenter.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-		"/images/center.gif"))); // NOI18N
+	btAlignCenter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/center.gif"))); // NOI18N
 	btAlignCenter.addMouseListener(new java.awt.event.MouseAdapter() {
 	    @Override
 	    public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -350,8 +339,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	pnlStyleControl.add(btAlignCenter, gridBagConstraints);
 
 	btnGrpAlignment.add(btAlignRight);
-	btAlignRight.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-		"/images/right.gif"))); // NOI18N
+	btAlignRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/right.gif"))); // NOI18N
 	btAlignRight.addMouseListener(new java.awt.event.MouseAdapter() {
 	    @Override
 	    public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -417,68 +405,37 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 30);
 	pnlStyleControl.add(cbFontSize, gridBagConstraints);
 
-	org.jdesktop.layout.GroupLayout pnlMainControlLayout = new org.jdesktop.layout.GroupLayout(
-		pnlMainControl);
+	org.jdesktop.layout.GroupLayout pnlMainControlLayout = new org.jdesktop.layout.GroupLayout(pnlMainControl);
 	pnlMainControl.setLayout(pnlMainControlLayout);
 	pnlMainControlLayout
-		.setHorizontalGroup(pnlMainControlLayout
-			.createParallelGroup(
-				org.jdesktop.layout.GroupLayout.LEADING)
-			.add(pnlMainControlLayout
+		.setHorizontalGroup(pnlMainControlLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(
+			pnlMainControlLayout
 				.createSequentialGroup()
 				.addContainerGap()
 				.add(pnlMainControlLayout
-					.createParallelGroup(
-						org.jdesktop.layout.GroupLayout.LEADING)
-					.add(pnlStyleControl,
-						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-						847,
-						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+					.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+					.add(pnlStyleControl, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 847, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
 					.add(pnlMainControlLayout
 						.createSequentialGroup()
-						.add(pnlLanguage,
-							org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-							319,
-							org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(
-							org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(pnlLanguage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 319, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
 						.add(chbAutoSave)
 						.add(38, 38, 38)
-						.add(pnlAutoSave,
-							org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-							org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-							org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-				.addContainerGap(441, Short.MAX_VALUE)));
-	pnlMainControlLayout
-		.setVerticalGroup(pnlMainControlLayout
-			.createParallelGroup(
-				org.jdesktop.layout.GroupLayout.LEADING)
+						.add(pnlAutoSave, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+							org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))).addContainerGap(441, Short.MAX_VALUE)));
+	pnlMainControlLayout.setVerticalGroup(pnlMainControlLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(
+		pnlMainControlLayout
+			.createSequentialGroup()
 			.add(pnlMainControlLayout
-				.createSequentialGroup()
+				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
 				.add(pnlMainControlLayout
-					.createParallelGroup(
-						org.jdesktop.layout.GroupLayout.LEADING)
-					.add(pnlMainControlLayout
-						.createSequentialGroup()
-						.addContainerGap()
-						.add(pnlMainControlLayout
-							.createParallelGroup(
-								org.jdesktop.layout.GroupLayout.TRAILING)
-							.add(chbAutoSave)
-							.add(pnlAutoSave,
-								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-								28,
-								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-					.add(pnlLanguage,
-						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-						55,
-						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-				.addPreferredGap(
-					org.jdesktop.layout.LayoutStyle.RELATED)
-				.add(pnlStyleControl,
-					org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-					org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-					Short.MAX_VALUE).add(4, 4, 4)));
+					.createSequentialGroup()
+					.addContainerGap()
+					.add(pnlMainControlLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING).add(chbAutoSave)
+						.add(pnlAutoSave, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+				.add(pnlLanguage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+			.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+			.add(pnlStyleControl, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).add(4, 4, 4)));
 
 	gridBagConstraints = new java.awt.GridBagConstraints();
 	gridBagConstraints.gridx = 0;
@@ -487,15 +444,10 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
 	add(pnlMainControl, gridBagConstraints);
 
-	org.jdesktop.layout.GroupLayout viewPnlLayout = new org.jdesktop.layout.GroupLayout(
-		viewPnl);
+	org.jdesktop.layout.GroupLayout viewPnlLayout = new org.jdesktop.layout.GroupLayout(viewPnl);
 	viewPnl.setLayout(viewPnlLayout);
-	viewPnlLayout.setHorizontalGroup(viewPnlLayout.createParallelGroup(
-		org.jdesktop.layout.GroupLayout.LEADING).add(0, 1300,
-		Short.MAX_VALUE));
-	viewPnlLayout.setVerticalGroup(viewPnlLayout.createParallelGroup(
-		org.jdesktop.layout.GroupLayout.LEADING).add(0, 434,
-		Short.MAX_VALUE));
+	viewPnlLayout.setHorizontalGroup(viewPnlLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(0, 1300, Short.MAX_VALUE));
+	viewPnlLayout.setVerticalGroup(viewPnlLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(0, 434, Short.MAX_VALUE));
 
 	gridBagConstraints = new java.awt.GridBagConstraints();
 	gridBagConstraints.gridx = 0;
@@ -558,8 +510,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	    size = Integer.parseInt(cbFontSize.getSelectedItem().toString());
 	} catch (Exception e) {
 	}
-	ActionListener a = new StyledEditorKit.FontSizeAction("FontSizeAction",
-		size);
+	ActionListener a = new StyledEditorKit.FontSizeAction("FontSizeAction", size);
 	ActionListener[] oldActs = cbFontSize.getActionListeners();
 	for (int i = 0; i < oldActs.length; i++)
 	    cbFontSize.removeActionListener(oldActs[i]);
@@ -584,8 +535,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	    return;
 	txtPnPad.setFontName(selFont.toString());
 
-	ActionListener a = new StyledEditorKit.FontFamilyAction(
-		"FontFamilyAction", cbFontFamily.getSelectedItem().toString());
+	ActionListener a = new StyledEditorKit.FontFamilyAction("FontFamilyAction", cbFontFamily.getSelectedItem().toString());
 	ActionListener[] oldActs = cbFontFamily.getActionListeners();
 	for (int i = 0; i < oldActs.length; i++)
 	    cbFontFamily.removeActionListener(oldActs[i]);
@@ -604,9 +554,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	// event_cbFontColorItemStateChanged
 	int index = cbFontColor.getSelectedIndex();
 	txtPnPad.setColorIndex(index);
-	ActionListener a = new StyledEditorKit.ForegroundAction(
-		"set-foreground-" + IndicPane.COLOR_STR_ARRAY[index],
-		IndicPane.COLOR_ARRAY[index]);
+	ActionListener a = new StyledEditorKit.ForegroundAction("set-foreground-" + IndicPane.COLOR_STR_ARRAY[index], IndicPane.COLOR_ARRAY[index]);
 	ActionListener[] oldActs = cbFontColor.getActionListeners();
 	for (int i = 0; i < oldActs.length; i++)
 	    cbFontColor.removeActionListener(oldActs[i]);
@@ -702,10 +650,10 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
     private javax.swing.JToggleButton btUnderline;
     private javax.swing.ButtonGroup btnGrpAlignment;
     private javax.swing.ButtonGroup btnGrpLanguage;
-    private javax.swing.JComboBox cbFontColor;
-    private javax.swing.JComboBox cbFontFamily;
-    private javax.swing.JComboBox cbFontSize;
-    private javax.swing.JComboBox cbSaveIntervalUnit;
+    private javax.swing.JComboBox<ImageIcon> cbFontColor;
+    private javax.swing.JComboBox<String> cbFontFamily;
+    private javax.swing.JComboBox<String> cbFontSize;
+    private javax.swing.JComboBox<String> cbSaveIntervalUnit;
     private javax.swing.JCheckBox chbAutoSave;
     private javax.swing.JLabel lbSaveInterval;
     private javax.swing.JPanel pnlAutoSave;
@@ -734,8 +682,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
      * hides unwanted language Radio and sets the default language radio to
      * selected mode
      */
-    protected void customiseLanguageSupported(Locale[] supportedLanguages,
-	    Locale defaultLocale) {
+    protected void customiseLanguageSupported(Locale[] supportedLanguages, Locale defaultLocale) {
 
 	List<Locale> supportedLanguagesList = Arrays.asList(supportedLanguages);
 
@@ -745,8 +692,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	    Font banglaFont = rdBtBangla.getFont();
 
 	    if (!banglaFont.canDisplay('\u0985')) {
-		String defaultBanglaFont = FontLoader.getBanglaFonts()
-			.iterator().next();
+		String defaultBanglaFont = FontLoader.getBanglaFonts().iterator().next();
 		rdBtBangla.setFont(new Font(defaultBanglaFont, Font.PLAIN, 14));
 	    }
 	}
@@ -763,8 +709,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
     }
 
-    private void fillFontComboWithNewFonts(Collection<String> fonts,
-	    String selectedFont) {
+    private void fillFontComboWithNewFonts(Collection<String> fonts, String selectedFont) {
 	JComboUtils.fillComboWithNewArray(cbFontFamily, fonts);
 	cbFontFamily.setSelectedItem(selectedFont);
     }
@@ -778,8 +723,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
     public void open() {
 	newPage();
 	JFileChooser fileChooser = new JFileChooser();
-	fileChooser.setCurrentDirectory(new File(System
-		.getProperty("user.home")));
+	fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 	fileChooser.setAcceptAllFileFilterUsed(false);
 	Filter filter = new Filter("xml", "XML Files(*.xml)");
 	fileChooser.addChoosableFileFilter(filter);
@@ -804,19 +748,13 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 	    fileChooser.addChoosableFileFilter(filter);
 	    filter = new Filter("html", "HTML Files(*.html)");
 	    fileChooser.addChoosableFileFilter(filter);
-	    int returnVal = fileChooser
-		    .showSaveDialog(BhashaDefaultPanelView.this);
+	    int returnVal = fileChooser.showSaveDialog(BhashaDefaultPanelView.this);
 
 	    if (returnVal == JFileChooser.APPROVE_OPTION) {
 		chosenFile = fileChooser.getSelectedFile();
 		if (checkFileExists(chosenFile)) {
-		    int option = JOptionPane
-			    .showConfirmDialog(
-				    this,
-				    "Do you want to replace the existing file? If you chose yes, the current data will be lost",
-				    "A file called " + chosenFile.getName()
-					    + " alredy exists.",
-				    JOptionPane.YES_NO_OPTION);
+		    int option = JOptionPane.showConfirmDialog(this, "Do you want to replace the existing file? If you chose yes, the current data will be lost",
+			    "A file called " + chosenFile.getName() + " alredy exists.", JOptionPane.YES_NO_OPTION);
 		    if (option == JOptionPane.YES_OPTION) {
 			autoSaveFile(chosenFile);
 		    } else {
@@ -831,11 +769,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
     private void readFile(File file) {
 	if (chosenFile != null && file.compareTo(chosenFile) == 0) {
-	    JOptionPane
-		    .showMessageDialog(
-			    this,
-			    "The requested File could not be opened as it is alredy in use by you.",
-			    "Sorry!", JOptionPane.ERROR_MESSAGE);
+	    JOptionPane.showMessageDialog(this, "The requested File could not be opened as it is alredy in use by you.", "Sorry!", JOptionPane.ERROR_MESSAGE);
 	} else {
 	    String fileName = file.getAbsolutePath();
 	    DocParser xml = new XHtmlDocParser();
@@ -846,8 +780,7 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
     private void autoSaveFile(File file) {
 
-	GenerateOutput.write(getPageContainer(), GenerateOutput.HTML_FORMAT,
-		file);
+	GenerateOutput.write(getPageContainer(), GenerateOutput.HTML_FORMAT, file);
 
     }
 
@@ -879,43 +812,29 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
     public void refillFontFamilyCombo() {
 	if (rdBtBangla.isSelected()) {
 	    currentLocale = IndicPane.BANGLA_LOCALE;
-	    txtPnPad.setIndicMap(new PropertyFileUtils().getKeyMap(
-		    currentLocale, false));
-	    fillFontComboWithNewFonts(FontLoader.getBanglaFonts(),
-		    ((Font) IndicPane.LOCALE_TO_FONT.get(currentLocale))
-			    .getFamily());
+	    txtPnPad.setIndicMap(new PropertyFileUtils().getKeyMap(currentLocale, false));
+	    fillFontComboWithNewFonts(FontLoader.getBanglaFonts(), ((Font) IndicPane.LOCALE_TO_FONT.get(currentLocale)).getFamily());
 
 	} else if (rdBtHindi.isSelected()) {
 	    currentLocale = IndicPane.HINDI_LOCALE;
-	    txtPnPad.setIndicMap(new PropertyFileUtils().getKeyMap(
-		    currentLocale, false));
-	    fillFontComboWithNewFonts(FontLoader.getHindiFonts(),
-		    ((Font) IndicPane.LOCALE_TO_FONT.get(currentLocale))
-			    .getFamily());
+	    txtPnPad.setIndicMap(new PropertyFileUtils().getKeyMap(currentLocale, false));
+	    fillFontComboWithNewFonts(FontLoader.getHindiFonts(), ((Font) IndicPane.LOCALE_TO_FONT.get(currentLocale)).getFamily());
 
 	} else if (rdBtEnglish.isSelected()) {
 	    currentLocale = IndicPane.ENGLISH_LOCALE;
 	    txtPnPad.setIndicMap(null);
-	    fillFontComboWithNewFonts(FontLoader.getEnglishFonts(),
-		    ((Font) IndicPane.LOCALE_TO_FONT.get(currentLocale))
-			    .getFamily());
+	    fillFontComboWithNewFonts(FontLoader.getEnglishFonts(), ((Font) IndicPane.LOCALE_TO_FONT.get(currentLocale)).getFamily());
 	}
 
 	txtPnPad.setLocale(currentLocale);
 	Object selFont = cbFontFamily.getSelectedItem();
 	if (selFont == null) {
-	    JOptionPane
-		    .showMessageDialog(
-			    this,
-			    "Suitable font not found",
-			    "Sorry! Could not find a suitable font to display the selected language",
-			    JOptionPane.ERROR_MESSAGE);
+	    JOptionPane.showMessageDialog(this, "Suitable font not found", "Sorry! Could not find a suitable font to display the selected language", JOptionPane.ERROR_MESSAGE);
 	    return;
 	}
 
 	// if(selFont != null)
-	txtPnPad.setAllAttributes(selFont.toString(), cbFontSize
-		.getSelectedItem().toString(), cbFontColor.getSelectedIndex());
+	txtPnPad.setAllAttributes(selFont.toString(), cbFontSize.getSelectedItem().toString(), cbFontColor.getSelectedIndex());
 	txtPnPad.requestFocus();
     }
 
@@ -934,16 +853,14 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
     private void initFontColourCombo() {
 	for (int i = 0; i < IndicPane.COLOR_ARRAY.length; i++) {
-	    new StyledEditorKit.ForegroundAction("set-foreground-"
-		    + IndicPane.COLOR_STR_ARRAY[i], IndicPane.COLOR_ARRAY[i]);
-	    ColoredSquare colorIcon = new ColoredSquare(
-		    IndicPane.COLOR_ARRAY[i], 20, 20);
+	    new StyledEditorKit.ForegroundAction("set-foreground-" + IndicPane.COLOR_STR_ARRAY[i], IndicPane.COLOR_ARRAY[i]);
+	    ColoredSquare colorIcon = new ColoredSquare(IndicPane.COLOR_ARRAY[i], 20, 20);
 	    ImageIcon imageIcon = colorIcon.getColoredSquare();
 	    imageIcon.setDescription(IndicPane.COLOR_STR_ARRAY[i]);
 	    cbFontColor.addItem(imageIcon);
 	}// end for
 
-	cbFontColor.setRenderer(new ListCellRenderer() {
+	cbFontColor.setRenderer(new ListCellRenderer<ImageIcon>() {
 
 	    private final JLabel label = new JLabel();
 
@@ -953,9 +870,8 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 		label.setVerticalAlignment(JLabel.CENTER);
 	    }
 
-	    public Component getListCellRendererComponent(JList list,
-		    Object value, int index, boolean isSelected,
-		    boolean cellHasFocus) {
+	    @Override
+	    public Component getListCellRendererComponent(JList list, ImageIcon value, int index, boolean isSelected, boolean cellHasFocus) {
 		if (isSelected) {
 		    label.setBackground(list.getSelectionBackground());
 		    label.setForeground(list.getSelectionForeground());
@@ -964,9 +880,8 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 		    label.setForeground(list.getForeground());
 		}
 
-		ImageIcon icon = (ImageIcon) value;
-		label.setText(icon.getDescription());
-		label.setIcon(icon);
+		label.setText(value.getDescription());
+		label.setIcon(value);
 		return label;
 	    }
 
@@ -974,10 +889,8 @@ public class BhashaDefaultPanelView extends JPanel implements BhashaView {
     }
 
     private void initFontSizeCombo() {
-	JComboUtils
-		.fillComboWithNewArray(cbFontSize, IndicPane.FONT_SIZE_ARRAY);
-	cbFontSize.setSelectedItem(Integer
-		.toString(IndicPane.STANDARD_FONT_SIZE));
+	JComboUtils.fillComboWithNewArray(cbFontSize, IndicPane.FONT_SIZE_ARRAY);
+	cbFontSize.setSelectedItem(Integer.toString(IndicPane.STANDARD_FONT_SIZE));
     }
 
     private void initStyleButtons() {// to consist of bold, plain, underline....
