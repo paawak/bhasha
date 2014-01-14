@@ -52,143 +52,142 @@ public class XHtmlGenerator extends AbstractDocGenerator {
     }
 
     public XHtmlGenerator(List<HTMLDocModel> pageModels) {
-        setContent(pageModels);
+	setContent(pageModels);
     }
 
     public void generate(File fileName) throws DocGenerationException {
 
-        try {
-            FileWriter fileoutputstream = new FileWriter(fileName);
-            fileoutputstream.append(getHtml());
-            fileoutputstream.flush();
-            fileoutputstream.close();
-        } catch (FileNotFoundException e) {
-            log.error("in generate()", e);
-            throw new DocGenerationException(e.getMessage());
-        } catch (IOException e) {
-            log.error("in generate()", e);
-            throw new DocGenerationException(e.getMessage());
-        }
+	try {
+	    FileWriter fileoutputstream = new FileWriter(fileName);
+	    fileoutputstream.append(getHtml());
+	    fileoutputstream.flush();
+	    fileoutputstream.close();
+	} catch (FileNotFoundException e) {
+	    log.error("in generate()", e);
+	    throw new DocGenerationException(e.getMessage());
+	} catch (IOException e) {
+	    log.error("in generate()", e);
+	    throw new DocGenerationException(e.getMessage());
+	}
 
     }
 
     public String getHtml() throws DocGenerationException {
-        StringBuilder html = new StringBuilder();
+	StringBuilder html = new StringBuilder();
 
-        html.append("<html><body>\n");
+	html.append("<html><body>\n");
 
-        for (HTMLDocModel model : pageModels) {
-            html.append(getHTMLForPage(model));
-        }
+	for (HTMLDocModel model : pageModels) {
+	    html.append(getHTMLForPage(model));
+	}
 
-        html.append("\n</body></html>");
+	html.append("\n</body></html>");
 
-        return html.toString();
+	return html.toString();
     }
 
     private String getHTMLForPage(HTMLDocModel htmlModel) throws DocGenerationException {
 
-        StringBuilder sb = new StringBuilder();
+	StringBuilder sb = new StringBuilder();
 
-        for (Para para : htmlModel.getParaList()) {
+	for (Para para : htmlModel.getParaList()) {
 
-            String align;
+	    String align;
 
-            switch (para.getAlignment()) {
-            case StyleConstants.ALIGN_CENTER:
-                align = HTMLKeyWords.CENTER_ALIGNED;
-                break;
-            case StyleConstants.ALIGN_RIGHT:
-                align = HTMLKeyWords.RIGHT_ALIGNED;
-                break;
-            case StyleConstants.ALIGN_JUSTIFIED:
-            case StyleConstants.ALIGN_LEFT:
-            default:
-                align = HTMLKeyWords.LEFT_ALIGNED;
-                break;
-            }
+	    switch (para.getAlignment()) {
+	    case StyleConstants.ALIGN_CENTER:
+		align = HTMLKeyWords.CENTER_ALIGNED;
+		break;
+	    case StyleConstants.ALIGN_RIGHT:
+		align = HTMLKeyWords.RIGHT_ALIGNED;
+		break;
+	    case StyleConstants.ALIGN_JUSTIFIED:
+	    case StyleConstants.ALIGN_LEFT:
+	    default:
+		align = HTMLKeyWords.LEFT_ALIGNED;
+		break;
+	    }
 
-            sb.append("\n<p align=\"").append(align).append("\">");
+	    sb.append("\n<p align=\"").append(align).append("\">");
 
-            for (ParaText paraText : para.getParaTextList()) {
-                Color color = paraText.getColor();
-                String htmlColor = "#";
-                String red = Integer.toHexString(color.getRed());
-                if (red.length() == 1)
-                    red = "0" + red;
-                String green = Integer.toHexString(color.getGreen());
-                if (green.length() == 1)
-                    green = "0" + green;
-                String blue = Integer.toHexString(color.getBlue());
-                if (blue.length() == 1)
-                    blue = "0" + blue;
-                htmlColor = htmlColor + red + green + blue;
+	    for (ParaText paraText : para.getParaTextList()) {
+		Color color = paraText.getColor();
+		String htmlColor = "#";
+		String red = Integer.toHexString(color.getRed());
+		if (red.length() == 1)
+		    red = "0" + red;
+		String green = Integer.toHexString(color.getGreen());
+		if (green.length() == 1)
+		    green = "0" + green;
+		String blue = Integer.toHexString(color.getBlue());
+		if (blue.length() == 1)
+		    blue = "0" + blue;
+		htmlColor = htmlColor + red + green + blue;
 
-                sb.append("<").append(HTMLKeyWords.FONT).append(" ").append(HTMLKeyWords.FONT_FACE).append("=\"").append(paraText.getFontFamily()).append("\" ").append(
-                        HTMLKeyWords.FONT_SIZE).append("=\"").append(paraText.getFontSize()).append("\" ").append(HTMLKeyWords.FONT_COLOR).append("=\"").append(htmlColor).append(
-                        "\">");
+		sb.append("<").append(HTMLKeyWords.FONT).append(" ").append(HTMLKeyWords.FONT_FACE).append("=\"").append(paraText.getFontFamily()).append("\" ").append(HTMLKeyWords.FONT_SIZE)
+			.append("=\"").append(paraText.getFontSize()).append("\" ").append(HTMLKeyWords.FONT_COLOR).append("=\"").append(htmlColor).append("\">");
 
-                if (paraText.isUnderline()) {
-                    sb.append("<").append(HTMLKeyWords.UNDERLINE).append(">");
-                }
+		if (paraText.isUnderline()) {
+		    sb.append("<").append(HTMLKeyWords.UNDERLINE).append(">");
+		}
 
-                if (paraText.isBold()) {
-                    sb.append("<").append(HTMLKeyWords.BOLD).append(">");
-                }
+		if (paraText.isBold()) {
+		    sb.append("<").append(HTMLKeyWords.BOLD).append(">");
+		}
 
-                if (paraText.isItalic()) {
-                    sb.append("<").append(HTMLKeyWords.ITALIC).append(">");
-                }
+		if (paraText.isItalic()) {
+		    sb.append("<").append(HTMLKeyWords.ITALIC).append(">");
+		}
 
-                if (FontLoader.getBanglaFonts().contains(paraText.getFontFamily()) || FontLoader.getHindiFonts().contains(paraText.getFontFamily())) {
-                    sb.append(getIndicStringForHtml(paraText.getText()));
-                } else {
-                    sb.append(paraText.getText());
-                }
+		if (FontLoader.getBanglaFonts().contains(paraText.getFontFamily()) || FontLoader.getHindiFonts().contains(paraText.getFontFamily())) {
+		    sb.append(getIndicStringForHtml(paraText.getText()));
+		} else {
+		    sb.append(paraText.getText());
+		}
 
-                if (paraText.isItalic()) {
-                    sb.append("</").append(HTMLKeyWords.ITALIC).append(">");
-                }
+		if (paraText.isItalic()) {
+		    sb.append("</").append(HTMLKeyWords.ITALIC).append(">");
+		}
 
-                if (paraText.isBold()) {
-                    sb.append("</").append(HTMLKeyWords.BOLD).append(">");
-                }
+		if (paraText.isBold()) {
+		    sb.append("</").append(HTMLKeyWords.BOLD).append(">");
+		}
 
-                if (paraText.isUnderline()) {
-                    sb.append("</").append(HTMLKeyWords.UNDERLINE).append(">");
-                }
+		if (paraText.isUnderline()) {
+		    sb.append("</").append(HTMLKeyWords.UNDERLINE).append(">");
+		}
 
-                sb.append("</").append(HTMLKeyWords.FONT).append(">\n");
+		sb.append("</").append(HTMLKeyWords.FONT).append(">\n");
 
-            }
+	    }
 
-            sb.append("</p>\n");
-        }
+	    sb.append("</p>\n");
+	}
 
-        return sb.toString();
+	return sb.toString();
     }
 
     private String getIndicStringForHtml(String indics) {
 
-        char[] charArray = indics.toCharArray();
+	char[] charArray = indics.toCharArray();
 
-        StringBuilder sb = new StringBuilder();
+	StringBuilder sb = new StringBuilder();
 
-        for (char indicChar : charArray) {
+	for (char indicChar : charArray) {
 
-            if ((indicChar >= 0x980 && indicChar <= 0x9ff) || (indicChar >= 0x900 && indicChar <= 0x97f)) {
+	    if ((indicChar >= 0x980 && indicChar <= 0x9ff) || (indicChar >= 0x900 && indicChar <= 0x97f)) {
 
-                sb.append("&#").append((int) indicChar).append(";");
+		sb.append("&#x").append(Integer.toHexString(indicChar)).append(";");
 
-            } else {
+	    } else {
 
-                sb.append(indicChar);
+		sb.append(indicChar);
 
-            }
+	    }
 
-        }
+	}
 
-        return sb.toString();
+	return sb.toString();
 
     }
 
