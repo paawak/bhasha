@@ -40,60 +40,47 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class BanglaPdfGenerationTest {
 
-//    /**
-//     * The unicode of this is given below:
-//     * 
-//     * \u0986\u09ae\u09bf \u0995\u09cb\u09a8 \u09aa\u09a5\u09c7
-//     * \u0995\u09cd\u09b7\u09c0\u09b0\u09c7\u09b0 \u09b7\u09a8\u09cd\u09a1
-//     * \u09aa\u09c1\u09a4\u09c1\u09b2 \u09b0\u09c1\u09aa\u09cb
-//     * \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf
-//     * 
-//     */
-    private static final String INDIC_TEXT = "আমি কোন চৌকো চৌ পথে ক্ষীরের লক্ষ্মী ষন্ড পুতুল রুপো গঙ্গা ঋষি";
-//    private static final String INDIC_TEXT = "কোম ঝরের ছো চো";
-//    private static final String INDIC_TEXT = "চৌ";
-//	private static final String INDIC_TEXT = "\u0995\u09c7\u09d7"; //kou
-//	private static final String INDIC_TEXT = "\u0995\u09c7\u09be"; //ko
-//	private static final String INDIC_TEXT = "लक्ष्मी खिरा लग्न मुर्गा";
-    
-//    private static final String INDIC_TEXT = "আমি ঝরের কাছে রেখে গেলাম আমার ঠিকানা মিশরের মমি";
+    private static final String INDIC_TEXT = "\u0986\u09ae\u09bf \u0995\u09cb\u09a8 \u09aa\u09a5\u09c7 \u0995\u09cd\u09b7\u09c0\u09b0\u09c7\u09b0 \u09b7\u09a8\u09cd\u09a1 "
+	    + "\u09aa\u09c1\u09a4\u09c1\u09b2 \u09b0\u09c1\u09aa\u09cb \u0997\u0999\u09cd\u0997\u09be \u098b\u09b7\u09bf";
 
     private static final String INDIC_FONT = "/com/swayam/bhasha/font/Lohit-Bengali.ttf";
-//    private static final String INDIC_FONT = "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
-//    private static final String INDIC_FONT = "/com/swayam/bhasha/font/VRINDA.TTF";
-//    private static final String INDIC_FONT = "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
-//	private static final String INDIC_FONT = "/com/swayam/bhasha/font/MANGAL.TTF";
+
+    // private static final String INDIC_FONT =
+    // "/com/swayam/bhasha/font/LOHIT_14-04-2007.TTF";
+    // private static final String INDIC_FONT =
+    // "/com/swayam/bhasha/font/VRINDA.TTF";
+    // private static final String INDIC_FONT =
+    // "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
+    // private static final String INDIC_FONT =
+    // "/com/swayam/bhasha/font/MANGAL.TTF";
 
     // private static final String INDIC_FONT =
     // "/com/swayam/bhasha/font/SolaimanLipi_22-02-2012.ttf";
 
     public void createPdf(String filename) throws DocumentException, IOException {
-        // step 1
-        Document document = new Document();
-        // step 2
-        PdfWriter.getInstance(document, new FileOutputStream(filename));
-        // step 3
-        document.open();
-        // step 4
-        Paragraph paragraph = new Paragraph();
-        Font font = new Font(
-        		BaseFont.createFont(
-        				BanglaPdfGenerationTest.class.getResource(INDIC_FONT).getFile(),
-        				BaseFont.IDENTITY_H, false));
-        font.setColor(BaseColor.BLUE);
-        font.setSize(20);
-        paragraph.add(new Phrase(INDIC_TEXT, font));
-        document.add(paragraph);
-        // step 5
-        document.close();
+	// step 1
+	Document document = new Document();
+	// step 2
+	PdfWriter.getInstance(document, new FileOutputStream(filename));
+	// step 3
+	document.open();
+	// step 4
+	Paragraph paragraph = new Paragraph();
+	Font font = new Font(BaseFont.createFont(BanglaPdfGenerationTest.class.getResource(INDIC_FONT).getFile(), BaseFont.IDENTITY_H, false));
+	font.setColor(BaseColor.BLUE);
+	font.setSize(20);
+	paragraph.add(new Phrase(INDIC_TEXT, font));
+	document.add(paragraph);
+	// step 5
+	document.close();
     }
 
     @Test
     public void testGenerate() throws IOException, DocumentException {
-        String fileName = System.getProperty("user.home") + "/a.pdf";
-        System.out.println(Thread.getDefaultUncaughtExceptionHandler());
-        new BanglaPdfGenerationTest().createPdf(fileName);
-        System.out.println(Thread.getDefaultUncaughtExceptionHandler());
+	String fileName = System.getProperty("user.home") + "/a.pdf";
+	System.out.println(Thread.getDefaultUncaughtExceptionHandler());
+	new BanglaPdfGenerationTest().createPdf(fileName);
+	System.out.println(Thread.getDefaultUncaughtExceptionHandler());
     }
 
 }
