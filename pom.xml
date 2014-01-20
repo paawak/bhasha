@@ -14,12 +14,6 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<!--<includes>
-					<include>**/*.properties</include>
-				</includes>
-				<excludes>
-					<exclude>META-INF/**</exclude>
-				</excludes>-->
 			</resource>
 		</resources>
 		<testResources>
@@ -29,15 +23,6 @@
 		</testResources>
 		<finalName>${project.artifactId}-${project.version}-beta</finalName>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
-					</archive>
-				</configuration>
-			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
@@ -59,6 +44,7 @@
 			<!--  generate a fat jar if desired, packaging all dependencies into one jar file -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
 				<executions>
 					<execution>
 						<id>make-assembly</id>
@@ -70,11 +56,11 @@
 				</executions>
 				<configuration>
 					<descriptorRefs>
-						<descriptorRef> jar-with-dependencies </descriptorRef>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass> com.swayam.bhasha.BhashaLauncher </mainClass>
+							<mainClass>com.swayam.bhasha.BhashaLauncher</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -95,11 +81,6 @@
 			<version>5.4.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itext-asian</artifactId>
-			<version>5.2.0</version>
-		</dependency>
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
@@ -109,10 +90,5 @@
 			<artifactId>swing-layout</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>core-renderer</artifactId>
-			<version>R8pre2</version>
-		</dependency>-->
 	</dependencies>
 </project>
