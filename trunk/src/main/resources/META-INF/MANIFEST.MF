@@ -1,5 +1,0 @@
-main-class: com.swayam.bhasha.BhashaLauncher
-author: paawak@gmail.com
-Permissions: sandbox
-Codebase: palashray.com
-Application-Name: Bhasha
