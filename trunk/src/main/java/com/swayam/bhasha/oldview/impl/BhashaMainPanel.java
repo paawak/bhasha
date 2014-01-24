@@ -63,7 +63,7 @@ public class BhashaMainPanel extends JPanel {
 
     }
 
-    BhashaView getBhashaView() {
+    public BhashaView getBhashaView() {
 	return bhashaView;
     }
 
