@@ -41,9 +41,9 @@ public class IndicPaneMin extends JTextPane {
 
     private final Logger logger = Logger.getLogger(getClass());
 
-    private static final Locale BANGLA_LOCALE = new Locale("bn", "IN");
-    private static final Locale HINDI_LOCALE = new Locale("hi", "IN");
-    private static final Locale ENGLISH_LOCALE = Locale.getDefault();
+    public static final Locale BANGLA_LOCALE = new Locale("bn", "IN");
+    public static final Locale HINDI_LOCALE = new Locale("hi", "IN");
+    public static final Locale ENGLISH_LOCALE = Locale.getDefault();
 
     /** contains default fonts for each locale */
     private static final Map<Locale, Font> LOCALE_TO_FONT = new HashMap<>(1);
