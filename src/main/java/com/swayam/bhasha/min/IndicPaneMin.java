@@ -6,19 +6,17 @@
 
 package com.swayam.bhasha.min;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -38,45 +36,71 @@ import com.swayam.bhasha.utils.PropertyFileUtils;
  * 
  * @author paawak
  */
+@SuppressWarnings("serial")
 public class IndicPaneMin extends JTextPane {
 
-    private static final long serialVersionUID = 1L;
     private final Logger logger = Logger.getLogger(getClass());
 
-    public IndicPaneMin() {
-	this(null, null, null);
+    private static final Locale BANGLA_LOCALE = new Locale("bn", "IN");
+    private static final Locale HINDI_LOCALE = new Locale("hi", "IN");
+    private static final Locale ENGLISH_LOCALE = Locale.getDefault();
+
+    /** contains default fonts for each locale */
+    private static final Map<Locale, Font> LOCALE_TO_FONT = new HashMap<>(1);
+    private static final int STANDARD_FONT_SIZE = 18;
+    private static final Font BANGLA_FONT_DEF = new Font("SolaimanLipi", Font.PLAIN, STANDARD_FONT_SIZE);
+    private static final Font HINDI_FONT_DEF = new Font("Mangal", Font.PLAIN, STANDARD_FONT_SIZE);
+    private static final Font ENGLISH_FONT_DEF = new Font("Arial", Font.PLAIN, STANDARD_FONT_SIZE);
+    /** Set containing the matras of Bangla and Hindi */
+    private static final Set<String> MATRAS = new TreeSet<>();
+    /**
+     * Set containing the SwarVarnas of Bangla and Hindi
+     */
+    private static final Set<String> SWAR_VARNAS = new TreeSet<>();
+    /**
+     * the ofset by which Bangla unicode differs from their Devnagari
+     * counterpart
+     */
+    private static final int BANGLA_OFFSET = 0x80;
+    /** the offset by which the Matras differ from the Swar Varnas */
+    private static final int MATRA_OFFSET = 0x38;
+
+    /** the no. of previous key charactes to be stored */
+    private static final int CHAR_LENGTH_MONITORED = 3;
+
+    static {
+	LOCALE_TO_FONT.put(BANGLA_LOCALE, BANGLA_FONT_DEF);
+	LOCALE_TO_FONT.put(HINDI_LOCALE, HINDI_FONT_DEF);
+	LOCALE_TO_FONT.put(ENGLISH_LOCALE, ENGLISH_FONT_DEF);
+
+	// add Matras in Hindi: 0x93e to 0x94c: these are mapped to their
+	// corresponding Swar Varnas: 0x906 to 0x914: an offset diffrence of
+	// 0x38
+	for (int i = 0x93e; i <= 0x94c; i++) {
+	    // Devnagari
+	    MATRAS.add(String.valueOf((char) i));
+	    SWAR_VARNAS.add(String.valueOf((char) (i - MATRA_OFFSET)));
+	    // Bangla
+	    MATRAS.add(String.valueOf((char) (i + BANGLA_OFFSET)));
+	    SWAR_VARNAS.add(String.valueOf((char) (i - MATRA_OFFSET + BANGLA_OFFSET)));
+	}
     }
 
-    public IndicPaneMin(Locale defaultLocale, Dimension pageDim, Insets insets) {
+    /** Map containing mapping from English to Indic chars */
+    private final Map<String, String> indicMap;
+
+    /** current locale: for displaying the labels */
+    private final Locale currentLocale;
+
+    private final CharStore charStore = new CharStore(CHAR_LENGTH_MONITORED);
+
+    public IndicPaneMin(Map<String, String> indicMap, Locale defaultLocale) {
 	super(new DefaultStyledDocument());
 
-	if (pageDim != null && insets != null) {
-	    setSize(pageDim);
-	    setPreferredSize(pageDim);
-	    setMaximumSize(pageDim);
-	    setMinimumSize(pageDim);
-	    setMargin(insets);
-	}
-
-	if (defaultLocale == null) {
-	    defaultLocale = BANGLA_LOCALE;
-	}
-
+	this.indicMap = indicMap;
 	this.currentLocale = defaultLocale;
 	setFont(LOCALE_TO_FONT.get(currentLocale));
 
-	/*
-	 * A small comment: the order of events recieved is:keyPressed, keyTyped
-	 * and then keyReleased. So, this last keyReleasedis not called when you
-	 * keep a key pressed. It is enough to set the char ofthe event in
-	 * keyTyped so that Roman chars are not displayed
-	 */
-	// this is not really needed
-	// addKeyListener(new KeyAdapter() {
-	// public void keyPressed(KeyEvent evt) {
-	// setEventKeyChar(evt);
-	// }
-	// });
 	addKeyListener(new KeyAdapter() {
 	    @Override
 	    public void keyTyped(KeyEvent evt) {
@@ -125,91 +149,33 @@ public class IndicPaneMin extends JTextPane {
 
     }
 
-    /** current locale: for displaying the labels */
-    private Locale currentLocale = null;
-    /** contains default fonts for each locale */
-    public static final Hashtable<Locale, Font> LOCALE_TO_FONT = new Hashtable<>(1);
-    public static final Locale BANGLA_LOCALE = new Locale("bn", "IN");
-    public static final Locale HINDI_LOCALE = new Locale("hi", "IN");
-    public static final Locale ENGLISH_LOCALE = Locale.getDefault();
-    public static final int STANDARD_FONT_SIZE = 18;
-    public static final Font BANGLA_FONT_DEF = new Font("SolaimanLipi", Font.PLAIN, STANDARD_FONT_SIZE);
-    public static final Font HINDI_FONT_DEF = new Font("Mangal", Font.PLAIN, STANDARD_FONT_SIZE);
-    public static final Font ENGLISH_FONT_DEF = new Font("Arial", Font.PLAIN, STANDARD_FONT_SIZE);
-    /** Set containing the matras of Bangla and Hindi */
-    private static final TreeSet<String> MATRAS = new TreeSet<>();
-    /**
-     * Set containing the SwarVarnas of Bangla and Hindi
-     */
-    private static final TreeSet<String> SWAR_VARNAS = new TreeSet<>();
-    /**
-     * the ofset by which Bangla unicode differs from their Devnagari
-     * counterpart
-     */
-    private static final int BANGLA_OFFSET = 0x80;
-    /** the offset by which the Matras differ from the Swar Varnas */
-    private static final int MATRA_OFFSET = 0x38;
-    /** Map containing mapping from English to Indic chars */
-    private Map<String, String> indicMap = null;
-    /** the no. of previous key charactes to be stored */
-    private final int CHAR_LENGTH_MONITORED = 3;
-    private final CharStore charStore = new CharStore(CHAR_LENGTH_MONITORED);
-    private boolean isBold = false;
-    private boolean isItalic = false;
-    private boolean isUnderline = false;
-    public static final String[] FONT_SIZE_ARRAY = { "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "40", "48", "52", "60", "72" };
-    public static final Color[] COLOR_ARRAY =
-	    { Color.black, Color.blue, Color.cyan, Color.darkGray, Color.gray, Color.green, Color.lightGray, Color.magenta, Color.orange, Color.pink, Color.red, Color.yellow };
-    public static final String[] COLOR_STR_ARRAY = { "Black", "Blue", "Cyan", "Darkgray", "Gray", "Green", "Lightgray", "Magenta", "Orange", "Pink", "Red", "Yellow" };
-    private String fontFamily = BANGLA_FONT_DEF.getFamily();
-    private String fontSize = String.valueOf(STANDARD_FONT_SIZE);
-    private int colorIndex = 0;
+    // public void setIndicMap(Map<String, String> indicMap) {
+    // this.indicMap = indicMap;
+    // }
+    //
+    // public void setFontName(String fontFamily) {
+    // this.fontFamily = fontFamily;
+    // }
+    //
+    // public void setFontSize(String fontSize) {
+    // this.fontSize = fontSize;
+    // }
 
-    // initialise the hashtable
-    static {
-	LOCALE_TO_FONT.put(BANGLA_LOCALE, BANGLA_FONT_DEF);
-	LOCALE_TO_FONT.put(HINDI_LOCALE, HINDI_FONT_DEF);
-	LOCALE_TO_FONT.put(ENGLISH_LOCALE, ENGLISH_FONT_DEF);
+    // public void setColorIndex(int colorIndex) {
+    // this.colorIndex = colorIndex;
+    // }
 
-	// add Matras in Hindi: 0x93e to 0x94c: these are mapped to their
-	// corresponding Swar Varnas: 0x906 to 0x914: an offset diffrence of
-	// 0x38
-	for (int i = 0x93e; i <= 0x94c; i++) {
-	    // Devnagari
-	    MATRAS.add(String.valueOf((char) i));
-	    SWAR_VARNAS.add(String.valueOf((char) (i - MATRA_OFFSET)));
-	    // Bangla
-	    MATRAS.add(String.valueOf((char) (i + BANGLA_OFFSET)));
-	    SWAR_VARNAS.add(String.valueOf((char) (i - MATRA_OFFSET + BANGLA_OFFSET)));
-	}
-    }
+    // public void setAllAttributes(String fontFamily, String fontSize, int
+    // colorIndex) {
+    // setFontName(fontFamily);
+    // setFontSize(fontSize);
+    // setColorIndex(colorIndex);
+    // }
 
-    public void setIndicMap(Map<String, String> indicMap) {
-	this.indicMap = indicMap;
-    }
-
-    public void setFontName(String fontFamily) {
-	this.fontFamily = fontFamily;
-    }
-
-    public void setFontSize(String fontSize) {
-	this.fontSize = fontSize;
-    }
-
-    public void setColorIndex(int colorIndex) {
-	this.colorIndex = colorIndex;
-    }
-
-    public void setAllAttributes(String fontFamily, String fontSize, int colorIndex) {
-	setFontName(fontFamily);
-	setFontSize(fontSize);
-	setColorIndex(colorIndex);
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-	currentLocale = locale;
-    }
+    // @Override
+    // public void setLocale(Locale locale) {
+    // currentLocale = locale;
+    // }
 
     private void replaceRomanChars(KeyEvent evt) {
 	// double check for locale: return if EnglishLocale
@@ -309,7 +275,7 @@ public class IndicPaneMin extends JTextPane {
      * this method sets the txt pn with the desired font family, font size, etc.
      * 
      */
-    public void initStyle(String text) {
+    private void initStyle(String text) {
 	int cursorPos = getCaretPosition();
 	SimpleAttributeSet a = getCurrentAttributeSet();
 	try {
@@ -326,8 +292,8 @@ public class IndicPaneMin extends JTextPane {
     /**
      * gets the current Attr set selected by the user
      */
-    SimpleAttributeSet getCurrentAttributeSet() {
-	SimpleAttributeSet a = new SimpleAttributeSet();
+    private SimpleAttributeSet getCurrentAttributeSet() {
+	SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
 	// handle the condition when no fonts of the current locale are
 	// available
 	// if(fontFamily == null){
@@ -339,22 +305,22 @@ public class IndicPaneMin extends JTextPane {
 	// return a;
 	// }
 
-	String currentFontFamily = fontFamily.toString();
-	StyleConstants.setFontFamily(a, currentFontFamily);
+	String currentFontFamily = LOCALE_TO_FONT.get(currentLocale).getFamily();
+	StyleConstants.setFontFamily(simpleAttributeSet, currentFontFamily);
 
-	int currentFontSize = Integer.parseInt(fontSize.toString());
-	StyleConstants.setFontSize(a, currentFontSize);
+	int currentFontSize = LOCALE_TO_FONT.get(currentLocale).getSize();
+	StyleConstants.setFontSize(simpleAttributeSet, currentFontSize);
 
-	Color currentColor = COLOR_ARRAY[colorIndex];
-	StyleConstants.setForeground(a, currentColor);
+	// Color currentColor = COLOR_ARRAY[colorIndex];
+	// StyleConstants.setForeground(a, currentColor);
+	//
+	// StyleConstants.setBold(a, isBold);
+	//
+	// StyleConstants.setItalic(a, isItalic);
+	//
+	// StyleConstants.setUnderline(a, isUnderline);
 
-	StyleConstants.setBold(a, isBold);
-
-	StyleConstants.setItalic(a, isItalic);
-
-	StyleConstants.setUnderline(a, isUnderline);
-
-	return a;
+	return simpleAttributeSet;
     }
 
     /**
@@ -362,30 +328,34 @@ public class IndicPaneMin extends JTextPane {
      * char
      */
     private void setEventKeyChar(KeyEvent ke) {
+	if (indicMap == null) {
+	    return;
+	}
 	String keyChar = String.valueOf(ke.getKeyChar());
+
 	// take the first char only
-	Object indicStr = indicMap == null ? null : indicMap.get(keyChar);
+	String indicStr = indicMap.get(keyChar);
 	if (indicStr == null) {
 	    return;
 	}
-	char indicChar = indicStr.toString().charAt(0);
+	char indicChar = indicStr.charAt(0);
 	ke.setKeyChar(indicChar);
     }
 
-    public void toggleItalicAction() {
-	isItalic = !isItalic;
-	requestFocus();
-    }
-
-    public void toggleBoldAction() {
-	isBold = !isBold;
-	requestFocus();
-    }
-
-    public void toggleUnderlineAction() {
-	isUnderline = !isUnderline;
-	requestFocus();
-    }
+    // public void toggleItalicAction() {
+    // isItalic = !isItalic;
+    // requestFocus();
+    // }
+    //
+    // public void toggleBoldAction() {
+    // isBold = !isBold;
+    // requestFocus();
+    // }
+    //
+    // public void toggleUnderlineAction() {
+    // isUnderline = !isUnderline;
+    // requestFocus();
+    // }
 
     /**
      * an inner class with a stack-like structure: it has a maximum capacity

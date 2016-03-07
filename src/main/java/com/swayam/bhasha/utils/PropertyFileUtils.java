@@ -75,7 +75,7 @@ public class PropertyFileUtils {
 	InputStream mappingFileStream = null;
 
 	try {
-	    mappingFileUrl = getUserKeyMappingFile(currentLocale).toURL();
+	    mappingFileUrl = getUserKeyMappingFile(currentLocale).toURI().toURL();
 	    mappingFileStream = mappingFileUrl.openStream();
 	} catch (Exception e) {
 	    logger.warn("readPropertiesFromFile:  User settings file not found: reading from the default file.....", e);
@@ -109,11 +109,16 @@ public class PropertyFileUtils {
 
     }
 
+    public Map<String, String> getKeyMap(Locale currentLocale, boolean indicKeys) {
+	String fileContent = readPropertiesFromFile(currentLocale);
+	return getKeyMap(fileContent, indicKeys);
+    }
+
     /**
      * gets key mapping with English keys
      */
-    public Map<String, String> getKeyMap(Locale currentLocale, boolean indicKeys) {
-	String fileContent = readPropertiesFromFile(currentLocale);
+    public Map<String, String> getKeyMap(String fileContent, boolean indicKeys) {
+
 	TreeMap<String, String> charMap = new TreeMap<>();
 
 	String[] lines = fileContent.split("\n");
@@ -173,11 +178,11 @@ public class PropertyFileUtils {
      * @parameters Map, Locale
      * @return true on successful writing, false otherwise
      */
-    public boolean writeKeyMapToUserFile(Map userMap, Locale locale) {
+    public boolean writeKeyMapToUserFile(Map<String, String> userMap, Locale locale) {
 	boolean written = false;
 	// get the Map as inverted key->val in a StringBuffer
-	Set keys = userMap.keySet();
-	Iterator keyIterator = keys.iterator();
+	Set<String> keys = userMap.keySet();
+	Iterator<String> keyIterator = keys.iterator();
 	StringBuffer fileContents = new StringBuffer(1);
 	while (keyIterator.hasNext()) {
 	    String key = keyIterator.next().toString();
