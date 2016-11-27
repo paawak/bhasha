@@ -97,12 +97,5 @@
 			<artifactId>swing-layout</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		<dependency>
-			<groupId>sun.plugin</groupId>
-			<artifactId>plugin</artifactId>
-			<version>1.7</version>
-			<scope>system</scope>
-			<systemPath>${java.home}/lib/plugin.jar</systemPath>
-		</dependency>
 	</dependencies>
 </project>
