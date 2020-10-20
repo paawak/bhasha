@@ -13,11 +13,11 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 public class PropertyFileUtils {
 
-    private final Logger logger = Logger.getLogger(getClass());
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
 
     private String fileName = null;
 
@@ -90,7 +90,7 @@ public class PropertyFileUtils {
 		try {
 		    mappingFileStream = mappingFileUrl.openStream();
 		} catch (IOException e) {
-		    logger.fatal("could not read from the default file", e);
+		    logger.error("could not read from the default file", e);
 		}
 	    }
 

@@ -30,7 +30,7 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.swayam.bhasha.utils.PropertyFileUtils;
 
@@ -41,7 +41,7 @@ import com.swayam.bhasha.utils.PropertyFileUtils;
 public class IndicPane extends JTextPane {
 
     private static final long serialVersionUID = 1L;
-    private final Logger logger = Logger.getLogger(getClass());
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
 
     public IndicPane() {
 	this(null, null, null);

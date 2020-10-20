@@ -29,7 +29,7 @@ import java.util.List;
 
 import javax.swing.text.StyleConstants;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.swayam.bhasha.engine.io.writers.DocGenerationException;
 import com.swayam.bhasha.model.html.HTMLDocModel;
@@ -45,7 +45,7 @@ import com.swayam.generic.utils.FontLoader;
  */
 public class XHtmlGenerator extends AbstractDocGenerator {
 
-    private final Logger log = Logger.getLogger(XHtmlGenerator.class);
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(XHtmlGenerator.class);
 
     XHtmlGenerator() {
 
