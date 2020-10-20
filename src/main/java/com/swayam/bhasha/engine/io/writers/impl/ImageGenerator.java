@@ -42,7 +42,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.text.StyleConstants;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.swayam.bhasha.engine.io.writers.DocGenerationException;
 import com.swayam.bhasha.model.html.HTMLDocModel;
@@ -62,7 +62,7 @@ class ImageGenerator extends AbstractDocGenerator {
 
     static final String IMAGE_TYPE_GIF = "GIF";
 
-    private static final Logger log = Logger.getLogger(ImageGenerator.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(ImageGenerator.class);
 
     private final String imageType;
 

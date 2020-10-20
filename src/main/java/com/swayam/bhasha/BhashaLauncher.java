@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.swayam.bhasha.oldview.impl.BhashaDefaultFrame;
 import com.swayam.bhasha.oldview.impl.SinglePageContainer;
@@ -39,7 +39,7 @@ public class BhashaLauncher {
 
     public static final JFrame VIEW_INSTANCE;
 
-    private static final Logger log = Logger.getLogger(BhashaLauncher.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(BhashaLauncher.class);
 
     /**
      * This method sets the main frame to the required height and width and

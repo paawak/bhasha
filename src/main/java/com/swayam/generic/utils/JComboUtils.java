@@ -20,11 +20,11 @@ import java.awt.event.ItemListener;
 import java.util.Collection;
 import javax.swing.JComboBox;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 public class JComboUtils {
 	
-	private static final Logger log = Logger.getLogger(JComboUtils.class);
+	private static final Logger log = org.slf4j.LoggerFactory.getLogger(JComboUtils.class);
     
     public static void fillComboWithNewArray(JComboBox combo,Object[] array){
         

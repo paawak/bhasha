@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.text.StyledEditorKit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.swayam.bhasha.engine.io.parsers.DocParser;
 import com.swayam.bhasha.engine.io.parsers.XHtmlDocParser;
@@ -47,7 +47,7 @@ import com.swayam.generic.utils.JComboUtils;
 @SuppressWarnings("serial")
 public class BhashaDefaultPanelView extends JPanel implements BhashaView {
 
-    private static final Logger logger = Logger.getLogger(BhashaDefaultPanelView.class);
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(BhashaDefaultPanelView.class);
 
     static {
 	// for debug only

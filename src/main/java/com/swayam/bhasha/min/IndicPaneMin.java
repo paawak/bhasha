@@ -28,7 +28,7 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.swayam.bhasha.utils.PropertyFileUtils;
 
@@ -39,7 +39,7 @@ import com.swayam.bhasha.utils.PropertyFileUtils;
 @SuppressWarnings("serial")
 public class IndicPaneMin extends JTextPane {
 
-    private final Logger logger = Logger.getLogger(getClass());
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
 
     public static final Locale BANGLA_LOCALE = new Locale("bn", "IN");
     public static final Locale HINDI_LOCALE = new Locale("hi", "IN");

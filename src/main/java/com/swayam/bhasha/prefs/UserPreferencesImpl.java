@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * 
@@ -44,7 +44,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private static final String PREFERENCE_KEY = UserPreferencesImpl.class.getSimpleName();
 
-    private static final Logger log = Logger.getLogger(UserPreferencesImpl.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(UserPreferencesImpl.class);
 
     private Locale defaultLanguage;
 
