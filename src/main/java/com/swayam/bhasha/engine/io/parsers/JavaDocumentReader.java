@@ -21,11 +21,11 @@
 package com.swayam.bhasha.engine.io.parsers;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
@@ -111,23 +111,20 @@ public class JavaDocumentReader {
 			color = new Color(0, 0, 0);
 		    }
 
-		    boolean bold = (Boolean) getAttributeValue(element, StyleConstants.Bold);
-		    boolean italic = (Boolean) getAttributeValue(element, StyleConstants.Italic);
-		    boolean underline = (Boolean) getAttributeValue(element, StyleConstants.Underline);
+		    Function<Boolean, Boolean> nullSafeBoolean = bool -> {
+			if (bool == null) {
+			    return false;
+			} else {
+			    return bool;
+			}
+		    };
+
+		    Boolean bold = nullSafeBoolean.apply((Boolean) getAttributeValue(element, StyleConstants.Bold));
+		    Boolean italic = nullSafeBoolean.apply((Boolean) getAttributeValue(element, StyleConstants.Italic));
+		    Boolean underline =
+			    nullSafeBoolean.apply((Boolean) getAttributeValue(element, StyleConstants.Underline));
 
 		    log.debug("getHtmlModel   7777777777777777");
-
-		    // the font style: bold/italic etc.
-		    // initially: plain
-		    int fontStyle = Font.PLAIN;
-
-		    if (bold) {
-			fontStyle |= Font.BOLD;
-		    }
-
-		    if (italic) {
-			fontStyle |= Font.ITALIC;
-		    }
 
 		    log.debug("getHtmlModel   88888888888888888");
 
@@ -135,7 +132,8 @@ public class JavaDocumentReader {
 
 		    log.debug("getHtmlModel   99999999999999999");
 
-		    ParaText paraText = JavaDocumentReader.getParaText(partialString, family, size, color, bold, italic, underline);
+		    ParaText paraText =
+			    JavaDocumentReader.getParaText(partialString, family, size, color, bold, italic, underline);
 
 		    log.debug("getHtmlModel   aaaaaaaaaaaa");
 
@@ -149,34 +147,42 @@ public class JavaDocumentReader {
 	return htmlModel;
     }
 
-    private static ParaText getParaText(final String text, final String fontFamily, final int fontSize, final Color color, final boolean bold, final boolean italic, final boolean underline) {
+    private static ParaText getParaText(final String text, final String fontFamily, final int fontSize,
+	    final Color color, final boolean bold, final boolean italic, final boolean underline) {
 
 	return new ParaText() {
 
+	    @Override
 	    public Color getColor() {
 		return color;
 	    }
 
+	    @Override
 	    public String getFontFamily() {
 		return fontFamily;
 	    }
 
+	    @Override
 	    public int getFontSize() {
 		return fontSize;
 	    }
 
+	    @Override
 	    public String getText() {
 		return text;
 	    }
 
+	    @Override
 	    public boolean isBold() {
 		return bold;
 	    }
 
+	    @Override
 	    public boolean isItalic() {
 		return italic;
 	    }
 
+	    @Override
 	    public boolean isUnderline() {
 		return underline;
 	    }
@@ -229,7 +235,8 @@ public class JavaDocumentReader {
 
     }
 
-    private static String getSubString(String typed, Element element, int newLineAdjustIndex) throws DocGenerationException {
+    private static String getSubString(String typed, Element element, int newLineAdjustIndex)
+	    throws DocGenerationException {
 	int elementStartOffset = element.getStartOffset();
 	int elementEndOffset = element.getEndOffset();
 	String userOs = System.getProperty("os.name");
@@ -237,9 +244,10 @@ public class JavaDocumentReader {
 	if (log.isDebugEnabled()) {
 
 	    StringBuilder debug = new StringBuilder();
-	    debug.append("getSubString() :: trying to do a substring of ").append(getIndicStringForDebug(typed)).append(", with total length = ").append(typed.length())
-		    .append(", elementStartOffset = ").append(elementStartOffset).append(", elementEndOffset = ").append(elementEndOffset).append(", newLineAdjustIndex = ").append(newLineAdjustIndex)
-		    .append(", userOs = ").append(userOs);
+	    debug.append("getSubString() :: trying to do a substring of ").append(getIndicStringForDebug(typed))
+		    .append(", with total length = ").append(typed.length()).append(", elementStartOffset = ")
+		    .append(elementStartOffset).append(", elementEndOffset = ").append(elementEndOffset)
+		    .append(", newLineAdjustIndex = ").append(newLineAdjustIndex).append(", userOs = ").append(userOs);
 
 	    log.debug(debug.toString());
 
@@ -265,8 +273,8 @@ public class JavaDocumentReader {
 	    log.error("in getSubString()", e);
 	}
 
-	throw new DocGenerationException(
-		"Please make the class " + JavaDocumentReader.class.getName() + " specific to your OS: you are getting IndexOutOfBoundsException while trying to do a substring.");
+	throw new DocGenerationException("Please make the class " + JavaDocumentReader.class.getName()
+		+ " specific to your OS: you are getting IndexOutOfBoundsException while trying to do a substring.");
     }
 
     private static final String getIndicStringForDebug(String indics) {
@@ -311,10 +319,12 @@ public class JavaDocumentReader {
 	    paraList = new ArrayList<ParaText>();
 	}
 
+	@Override
 	public int getAlignment() {
 	    return alignment;
 	}
 
+	@Override
 	public List<ParaText> getParaTextList() {
 	    return Collections.unmodifiableList(paraList);
 	}
@@ -333,6 +343,7 @@ public class JavaDocumentReader {
 	    paraList = new ArrayList<Para>();
 	}
 
+	@Override
 	public List<Para> getParaList() {
 	    return Collections.unmodifiableList(paraList);
 	}
